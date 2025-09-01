@@ -64,6 +64,15 @@ class SignupView extends GetView<SignupController> {
                       controller.selectedRole.value = value!;
                     },
                   ),
+                  RadioListTile<String>(
+                    title: const Text('Admin'),
+                    subtitle: const Text('Manage users and settings'),
+                    value: 'admin',
+                    groupValue: controller.selectedRole.value,
+                    onChanged: (value) {
+                      controller.selectedRole.value = value!;
+                    },
+                  ),
                 ],
               ),
             ),
