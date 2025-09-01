@@ -1,5 +1,5 @@
-import 'package:restaurant/app/services/auth_service.dart';
-import 'package:restaurant/app/routes/app_pages.dart';
+import 'package:rangking_cabang_olahraga/app/services/auth_service.dart';
+import 'package:rangking_cabang_olahraga/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';

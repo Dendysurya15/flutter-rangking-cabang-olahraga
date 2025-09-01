@@ -1,4 +1,4 @@
-package com.nocompany.restaurant
+package com.nocompany.rangking_cabang_olahraga
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

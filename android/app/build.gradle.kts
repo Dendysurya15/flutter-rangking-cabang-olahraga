@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nocompany.restaurant"
+    namespace = "com.nocompany.rangking_cabang_olahraga"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nocompany.restaurant"
+        applicationId = "com.nocompany.rangking_cabang_olahraga"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

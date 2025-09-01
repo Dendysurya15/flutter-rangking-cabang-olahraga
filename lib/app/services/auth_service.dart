@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:restaurant/app/routes/app_pages.dart';
+import 'package:rangking_cabang_olahraga/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
 class AuthService extends GetxController {
