@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
 
-class ToastHelper {
+class ToastWidget {
   static void showToast({
     required BuildContext context,
     required String title,
