@@ -206,8 +206,7 @@ class _ScrollablePodiumListState extends State<ScrollablePodiumList> {
   }
 
   void _scrollListener() {
-    // Threshold is 0 - disappears immediately when scrolled
-    if (_scrollController.offset > 0) {
+    if (_scrollController.offset > 250) {
       if (_isPodiumVisible) {
         setState(() {
           _isPodiumVisible = false;
@@ -235,32 +234,15 @@ class _ScrollablePodiumListState extends State<ScrollablePodiumList> {
       slivers: [
         // Animated Podium Section
         SliverToBoxAdapter(
-          child: AnimatedContainer(
+          child: AnimatedOpacity(
+            opacity: _isPodiumVisible ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 300),
-            height: _isPodiumVisible ? 350 : 0, // Podium height + container
-            child: _isPodiumVisible
-                ? Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        // Dynamic Podium
-                        widget.controller.topThree.isNotEmpty
-                            ? DynamicPodiumWidget(
-                                topThree: widget.controller.topThree,
-                              )
-                            : const PodiumWidget(),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  )
-                : Container(),
+            child: SizedBox(
+              height: 350,
+              child: widget.controller.topThree.isNotEmpty
+                  ? DynamicPodiumWidget(topThree: widget.controller.topThree)
+                  : const PodiumWidget(),
+            ),
           ),
         ),
 

@@ -40,12 +40,6 @@ dependencies:
   toastification: ^3.0.3
   intl: ^0.20.2
   shared_preferences:
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  midtrans_sdk:
-  dio:
-  url_launcher:
-  webview_flutter:
 
 dev_dependencies:
   flutter_test:
