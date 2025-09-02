@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:rangking_cabang_olahraga/app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/filter_button_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/podium_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/period_filter_bottom_sheet.dart';
+import 'package:rangking_cabang_olahraga/app/widgets/points_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/rangking_item_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/region_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/sport_filter_bottom_sheet.dart';
@@ -19,21 +21,73 @@ class HomeView extends GetView<HomeController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text('Welcome ${authC.userRole.value.toUpperCase()}')),
-        centerTitle: true,
-        backgroundColor: HexColor("#7A5AF8"),
+        backgroundColor: const Color(0xFF7A5AF8), // your purple
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => controller.refreshData(),
+        centerTitle: true,
+        title: InkWell(
+          onTap: () {
+            // handle click on "Summer 2025"
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Summer 2025",
+                style: GoogleFonts.rubik(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white, // keep white for app bar
+                ),
+              ),
+
+              const SizedBox(width: 6),
+              // arrow wrapped in circle
+              Container(
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: Colors.white, // faint circle bg
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.deepPurple,
+                  size: 20,
+                ),
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => authC.logout(),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const PointsBottomSheet(),
+                );
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5B3CC4), // darker purple
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.help_outline, color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),
+
       body: Stack(
         children: [
           // Solid purple background
