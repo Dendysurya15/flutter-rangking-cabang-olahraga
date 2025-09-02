@@ -1,51 +1,68 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class HomeController extends GetxController {
-  // Observable variables
+  // --- Filters ---
   var selectedPeriod = "Summer 2025".obs;
   var selectedSports = <String>["Tenis Meja"].obs;
   var selectedRegions = <String>["All Region"].obs;
 
-  // Ranking data
+  // --- Rankings ---
   var rankings = <Map<String, dynamic>>[].obs;
   var topThree = <Map<String, dynamic>>[].obs;
   var isLoading = false.obs;
 
+  // --- Scroll + Podium visibility ---
+  final scrollController = ScrollController();
+  var isPodiumVisible = true.obs;
+
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(_scrollListener);
     fetchRankings();
   }
 
-  // Update period filter
+  // Toggle podium visibility based on scroll
+  void _scrollListener() {
+    if (scrollController.offset > 250) {
+      if (isPodiumVisible.value) {
+        isPodiumVisible.value = false;
+      }
+    } else {
+      if (!isPodiumVisible.value) {
+        isPodiumVisible.value = true;
+      }
+    }
+  }
+
+  // --- Filters update ---
   void updatePeriod(String period) {
     selectedPeriod.value = period;
     fetchRankings();
   }
 
-  // Update sports filter
   void updateSports(List<String> sports) {
     selectedSports.assignAll(sports);
     fetchRankings();
   }
 
-  // Update regions filter
   void updateRegions(List<String> regions) {
     selectedRegions.assignAll(regions);
     fetchRankings();
   }
 
-  // Fetch rankings
+  // --- Fetch rankings (dummy) ---
   Future<void> fetchRankings() async {
     try {
       isLoading.value = true;
 
-      // Simulate API call
+      // Simulate API delay
       await Future.delayed(const Duration(milliseconds: 500));
 
       var allRankings = getDummyRankings();
 
-      // Separate top 3 and the rest
+      // Split into top3 + rest
       topThree.assignAll(allRankings.take(3).toList());
       rankings.assignAll(allRankings.skip(3).toList());
     } catch (e) {
@@ -55,7 +72,12 @@ class HomeController extends GetxController {
     }
   }
 
-  // Get display text for filters
+  // --- Refresh ---
+  Future<void> refreshData() async {
+    await fetchRankings();
+  }
+
+  // --- Display text for filters ---
   String get sportsDisplayText {
     if (selectedSports.isEmpty) return "All Sports";
     if (selectedSports.length == 1) return selectedSports.first;
@@ -70,12 +92,7 @@ class HomeController extends GetxController {
     return "${selectedRegions.first} +${selectedRegions.length - 1}";
   }
 
-  // Refresh data
-  Future<void> refreshData() async {
-    await fetchRankings();
-  }
-
-  // Dummy data
+  // --- Dummy data ---
   List<Map<String, dynamic>> getDummyRankings() {
     return [
       {
@@ -120,59 +137,67 @@ class HomeController extends GetxController {
       },
       {
         'rank': 6,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Fauzan Pratama',
+        'username': '@fauzan',
+        'points': '95 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Fauzan+Pratama&background=84cc16&color=fff',
       },
       {
         'rank': 7,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Aulia Rahman',
+        'username': '@aulia',
+        'points': '90 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Aulia+Rahman&background=ec4899&color=fff',
       },
       {
         'rank': 8,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Putri Wulandari',
+        'username': '@putri',
+        'points': '85 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Putri+Wulandari&background=ef4444&color=fff',
       },
       {
         'rank': 9,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Rama Setiawan',
+        'username': '@rama',
+        'points': '80 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Rama+Setiawan&background=3b82f6&color=fff',
       },
       {
         'rank': 10,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Dinda Cahyani',
+        'username': '@dinda',
+        'points': '78 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
       {
         'rank': 11,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Dinda Cahyani',
+        'username': '@dinda',
+        'points': '78 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
       {
         'rank': 12,
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'points': '100 Pts',
+        'name': 'Dinda Cahyani',
+        'username': '@dinda',
+        'points': '78 Pts',
         'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
+      },
+      {
+        'rank': 13,
+        'name': 'Dinda Cahyani',
+        'username': '@dinda',
+        'points': '78 Pts',
+        'avatar':
+            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
     ];
   }
