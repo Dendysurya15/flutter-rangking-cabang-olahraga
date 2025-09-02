@@ -12,6 +12,8 @@ class RegionFilterBottomSheet extends StatefulWidget {
 
 class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
   late List<String> selectedRegions;
+  String searchQuery = "";
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -19,26 +21,46 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
     selectedRegions = List.from(widget.currentSelections);
   }
 
-  final Map<String, List<String>> regions = {
-    "DKI Jakarta": [
-      "Jakarta Pusat",
-      "Jakarta Utara",
-      "Jakarta Barat",
-      "Jakarta Timur",
-      "Jakarta Selatan",
-    ],
-    "Jawa Barat": ["Bandung", "Bogor", "Bekasi", "Depok", "Cimahi"],
-    "Jawa Tengah": ["Solo", "Semarang", "Magelang", "Yogyakarta"],
-    "Jawa Timur": ["Surabaya", "Malang", "Sidoarjo", "Gresik"],
-    "Bali": ["Denpasar", "Ubud", "Sanur", "Kuta"],
-  };
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  final List<String> regions = [
+    "DKI Jakarta",
+    "Tangerang",
+    "Bekasi",
+    "Bogor",
+    "Depok",
+    "Bandung",
+    "Yogyakarta",
+    "Surabaya",
+    "Malang",
+  ];
+
+  List<String> get filteredRegions {
+    if (searchQuery.isEmpty) return regions;
+    return regions
+        .where(
+          (region) => region.toLowerCase().contains(searchQuery.toLowerCase()),
+        )
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
       padding: const EdgeInsets.all(20),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           // Handle bar
           Container(
@@ -59,39 +81,109 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
                 "Pilih Region",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Icon(Icons.close, size: 24),
               ),
             ],
           ),
           const SizedBox(height: 20),
 
-          // Regions
+          // Search bar with clear button
           Container(
-            height: 400,
-            child: ListView(
-              children: regions.entries.map((entry) {
-                return ExpansionTile(
-                  title: Text(entry.key),
-                  children: entry.value.map((city) {
-                    final isSelected = selectedRegions.contains(city);
-                    return CheckboxListTile(
-                      title: Text(city),
-                      value: isSelected,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            selectedRegions.add(city);
-                          } else {
-                            selectedRegions.remove(city);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      hintText: "Cari nama kota",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                  ),
+                ),
+                if (searchQuery.isNotEmpty)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        searchController.clear();
+                        searchQuery = "";
+                      });
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.grey.shade500,
+                      size: 20,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Region list
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredRegions.length,
+              itemBuilder: (context, index) {
+                final region = filteredRegions[index];
+                final isSelected = selectedRegions.contains(region);
+
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        selectedRegions.remove(region);
+                      } else {
+                        selectedRegions.add(region);
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade200,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: _buildHighlightedText(region, searchQuery),
+                          ),
+                        ),
+                        if (isSelected)
+                          const Icon(
+                            Icons.check,
+                            color: Color(0xFF7A5AF8),
+                            size: 20,
+                          ),
+                      ],
+                    ),
+                  ),
                 );
-              }).toList(),
+              },
             ),
           ),
 
@@ -101,22 +193,95 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, selectedRegions);
-              },
+              onPressed: selectedRegions.isNotEmpty
+                  ? () => Navigator.pop(context, selectedRegions)
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: selectedRegions.isNotEmpty
+                    ? const Color(0xFF7A5AF8)
+                    : Colors.grey.shade300,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 0,
               ),
-              child: const Text("Terapkan"),
+              child: const Text(
+                "Terapkan",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  TextSpan _buildHighlightedText(String text, String query) {
+    if (query.isEmpty) {
+      return TextSpan(
+        text: text,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+          fontWeight: FontWeight.w400,
+        ),
+      );
+    }
+
+    final isSelected = selectedRegions.contains(text);
+    final lowerText = text.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+
+    List<TextSpan> spans = [];
+    int start = 0;
+
+    while (start < text.length) {
+      final index = lowerText.indexOf(lowerQuery, start);
+      if (index == -1) {
+        spans.add(
+          TextSpan(
+            text: text.substring(start),
+            style: TextStyle(
+              fontSize: 16,
+              color: isSelected ? const Color(0xFF7A5AF8) : Colors.black87,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        );
+        break;
+      }
+
+      if (index > start) {
+        spans.add(
+          TextSpan(
+            text: text.substring(start, index),
+            style: TextStyle(
+              fontSize: 16,
+              color: isSelected ? const Color(0xFF7A5AF8) : Colors.black87,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        );
+      }
+
+      spans.add(
+        TextSpan(
+          text: text.substring(index, index + query.length),
+          style: TextStyle(
+            fontSize: 16,
+            color: isSelected
+                ? const Color(0xFF7A5AF8)
+                : const Color(0xFF7A5AF8),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+
+      start = index + query.length;
+    }
+
+    return TextSpan(children: spans);
   }
 }

@@ -11,6 +11,8 @@ class HomeController extends GetxController {
   var rankings = <Map<String, dynamic>>[].obs;
   var topThree = <Map<String, dynamic>>[].obs;
   var isLoading = false.obs;
+  // Add this to your controller
+  var selectedGameType = "Tunggal".obs;
 
   // --- Scroll + Podium visibility ---
   final scrollController = ScrollController();
@@ -20,6 +22,12 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     scrollController.addListener(_scrollListener);
+    fetchRankings();
+  }
+
+  // Add this method
+  void updateGameType(String gameType) {
+    selectedGameType.value = gameType;
     fetchRankings();
   }
 

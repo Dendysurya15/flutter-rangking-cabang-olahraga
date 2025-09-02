@@ -4,6 +4,7 @@ import 'package:rangking_cabang_olahraga/app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/filter_button_widgets.dart';
+import 'package:rangking_cabang_olahraga/app/widgets/game_type_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/podium_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/period_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/points_widgets.dart';
@@ -26,7 +27,20 @@ class HomeView extends GetView<HomeController> {
         centerTitle: true,
         title: InkWell(
           onTap: () {
-            // handle click on "Summer 2025"
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              isScrollControlled: true,
+              builder: (context) => PeriodFilterBottomSheet(
+                currentSelection: controller.selectedPeriod.value,
+              ),
+            ).then((selectedPeriod) {
+              if (selectedPeriod != null) {
+                controller.updatePeriod(selectedPeriod);
+              }
+            });
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -137,10 +151,10 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
 
-          // Your actual content
           Column(
             children: [
               // --- Filters ---
+              // Replace your existing filter buttons section with this:
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Obx(
@@ -148,15 +162,8 @@ class HomeView extends GetView<HomeController> {
                     children: [
                       Expanded(
                         child: FilterButton(
-                          title: "Periode",
-                          subtitle: controller.selectedPeriod.value,
-                          onTap: () => _showPeriodFilter(context),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: FilterButton(
-                          title: "Cabor",
+                          title:
+                              "Sport", // Not used anymore, but kept for compatibility
                           subtitle: controller.sportsDisplayText,
                           onTap: () => _showSportFilter(context),
                         ),
@@ -164,7 +171,15 @@ class HomeView extends GetView<HomeController> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: FilterButton(
-                          title: "Region",
+                          title: "Type", // Not used anymore
+                          subtitle: controller.selectedGameType.value,
+                          onTap: () => _showGameTypeFilter(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: FilterButton(
+                          title: "Region", // Not used anymore
                           subtitle: controller.regionsDisplayText,
                           onTap: () => _showRegionFilter(context),
                         ),
@@ -347,27 +362,19 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  void _showPeriodFilter(BuildContext context) {
+  void _showGameTypeFilter(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
-      builder: (context) => PeriodFilterBottomSheet(
-        currentSelection: controller.selectedPeriod.value,
+      builder: (context) => GameTypeFilterBottomSheet(
+        currentSelection: controller.selectedGameType.value,
       ),
-    ).then((selectedPeriod) {
-      if (selectedPeriod != null) {
-        controller.updatePeriod(selectedPeriod);
-        Get.snackbar(
-          "Filter Applied",
-          "Period updated to: $selectedPeriod",
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.deepPurple,
-          colorText: Colors.white,
-        );
+    ).then((selectedType) {
+      if (selectedType != null) {
+        controller.updateGameType(selectedType);
       }
     });
   }
@@ -424,59 +431,3 @@ class HomeView extends GetView<HomeController> {
 }
 
 // Dynamic Podium Widget (same as your original)
-class DynamicPodiumWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> topThree;
-
-  const DynamicPodiumWidget({super.key, required this.topThree});
-
-  @override
-  Widget build(BuildContext context) {
-    if (topThree.length < 3) {
-      return const PodiumWidget();
-    }
-
-    return Container(
-      height: 300,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // 2nd Place
-          if (topThree.length > 1)
-            PodiumItem(
-              rank: 2,
-              name: topThree[1]['name'],
-              points: topThree[1]['points'],
-              height: 120,
-              color: Colors.grey.shade300,
-              avatar: topThree[1]['avatar'],
-            ),
-          const SizedBox(width: 20),
-
-          // 1st Place
-          PodiumItem(
-            rank: 1,
-            name: topThree[0]['name'],
-            points: topThree[0]['points'],
-            height: 150,
-            color: Colors.amber.shade300,
-            avatar: topThree[0]['avatar'],
-          ),
-          const SizedBox(width: 20),
-
-          // 3rd Place
-          if (topThree.length > 2)
-            PodiumItem(
-              rank: 3,
-              name: topThree[2]['name'],
-              points: topThree[2]['points'],
-              height: 100,
-              color: Colors.orange.shade300,
-              avatar: topThree[2]['avatar'],
-            ),
-        ],
-      ),
-    );
-  }
-}
