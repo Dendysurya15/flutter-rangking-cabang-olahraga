@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RankingItem extends StatelessWidget {
   final int rank;
@@ -6,7 +7,7 @@ class RankingItem extends StatelessWidget {
   final String username;
   final String points;
   final String avatar;
-  final String status; // New status parameter: "up", "down", or "stable"
+  final String status; // "up", "down", "stable"
   final bool isHighlighted;
 
   const RankingItem({
@@ -33,7 +34,7 @@ class RankingItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Rank - Simple text
+          // Rank
           SizedBox(
             width: 20,
             child: Text(
@@ -47,15 +48,39 @@ class RankingItem extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // Avatar
-          CircleAvatar(
-            radius: 18,
-            backgroundImage: NetworkImage(avatar),
-            backgroundColor: Colors.grey.shade200,
+          // Avatar with optional crown
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage(avatar),
+                backgroundColor: Colors.grey.shade200,
+              ),
+
+              if (rank == 1)
+                Positioned(
+                  bottom: -6,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4), // space inside circle
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.amber, // background amber
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    child: const FaIcon(
+                      FontAwesomeIcons.crown,
+                      color: Colors.white, // crown icon white
+                      size: 9,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(width: 12),
 
-          // Name and Username
+          // Name + username
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,17 +107,23 @@ class RankingItem extends StatelessWidget {
             ),
           ),
 
-          // Status indicator
-          _buildStatusIndicator(),
-          const SizedBox(width: 8),
-
-          // Points - Simple text, right aligned
-          Text(
-            points,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black54,
+          SizedBox(
+            height: 40,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment:
+                  CrossAxisAlignment.end, // Everything aligned to the right
+              children: [
+                _buildStatusIndicator(), // Top right
+                Text(
+                  "$points",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ), // Bottom right
+              ],
             ),
           ),
         ],

@@ -152,59 +152,88 @@ class HomeView extends GetView<HomeController> {
                         ),
 
                         Obx(
-                          () =>
-                              !controller.isPodiumVisible.value &&
-                                  controller.topThree.isNotEmpty
-                              ? SliverList(
-                                  delegate: SliverChildBuilderDelegate((
-                                    context,
-                                    index,
-                                  ) {
-                                    if (index >= controller.topThree.length)
-                                      return null;
-
-                                    final topRanking =
-                                        controller.topThree[index];
-                                    return Container(
-                                      color: Colors.white,
-                                      child: RankingItem(
-                                        rank: topRanking['rank'],
-                                        name: topRanking['name'],
-                                        username: topRanking['username'],
-                                        points: topRanking['points'],
-                                        status: topRanking['status'],
-                                        avatar: topRanking['avatar'],
-                                      ),
-                                    );
-                                  }, childCount: controller.topThree.length),
-                                )
-                              : const SliverToBoxAdapter(child: SizedBox()),
-                        ),
-
-                        // Regular rankings (rank 4+ or all rankings if no top 3)
-                        Obx(
-                          () => SliverList(
-                            delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                            ) {
-                              if (index >= controller.rankings.length) {
-                                return null;
-                              }
-                              final ranking = controller.rankings[index];
-                              return Container(
+                          () => SliverToBoxAdapter(
+                            child: Container(
+                              decoration: const BoxDecoration(
                                 color: Colors.white,
-                                child: RankingItem(
-                                  rank: ranking['rank'],
-                                  name: ranking['name'],
-                                  username: ranking['username'],
-                                  points: ranking['points'],
-                                  avatar: ranking['avatar'],
-                                  status: ranking['status'],
-                                  isHighlighted: false,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
                                 ),
-                              );
-                            }, childCount: controller.rankings.length),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Content below
+                                  Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 16,
+                                      ), // space for the handle bar
+                                      // Top 3 block (if podium is hidden)
+                                      if (!controller.isPodiumVisible.value &&
+                                          controller.topThree.isNotEmpty)
+                                        Column(
+                                          children: List.generate(
+                                            controller.topThree.length,
+                                            (index) {
+                                              final topRanking =
+                                                  controller.topThree[index];
+                                              return RankingItem(
+                                                rank: topRanking['rank'],
+                                                name: topRanking['name'],
+                                                username:
+                                                    topRanking['username'],
+                                                points: topRanking['points'],
+                                                avatar: topRanking['avatar'],
+                                                status: topRanking['status'],
+                                              );
+                                            },
+                                          ),
+                                        ),
+
+                                      // Main rankings
+                                      Column(
+                                        children: List.generate(
+                                          controller.rankings.length,
+                                          (index) {
+                                            final ranking =
+                                                controller.rankings[index];
+                                            return RankingItem(
+                                              rank: ranking['rank'],
+                                              name: ranking['name'],
+                                              username: ranking['username'],
+                                              points: ranking['points'],
+                                              avatar: ranking['avatar'],
+                                              status: ranking['status'],
+                                              isHighlighted: false,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Tiny handle bar (overlayed at the top center)
+                                  Positioned(
+                                    top: 10,
+                                    left: 0,
+                                    right: 0,
+                                    child: Center(
+                                      child: Container(
+                                        width: 40,
+                                        height: 6,
+                                        decoration: BoxDecoration(
+                                          color: HexColor("#CACCCF"),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
 
@@ -251,7 +280,7 @@ class HomeView extends GetView<HomeController> {
                               : const SliverToBoxAdapter(child: SizedBox()),
                         ),
 
-                        const SliverToBoxAdapter(child: SizedBox(height: 50)),
+                        const SliverToBoxAdapter(child: SizedBox(height: 0)),
                       ],
                     ),
                   );

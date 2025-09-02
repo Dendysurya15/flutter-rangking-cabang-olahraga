@@ -139,13 +139,14 @@ class PodiumItem extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.amber,
+                    border: Border.all(color: HexColor("#7A5AF8"), width: 1.5),
                   ),
                   padding: const EdgeInsets.all(4),
                   child: const FaIcon(
                     FontAwesomeIcons.crown, // Font Awesome crown icon
-                    color: Colors.amber,
-                    size: 13,
+                    color: Colors.white,
+                    size: 10,
                   ),
                 ),
               ),
