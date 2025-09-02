@@ -172,6 +172,7 @@ class HomeView extends GetView<HomeController> {
                                         name: topRanking['name'],
                                         username: topRanking['username'],
                                         points: topRanking['points'],
+                                        status: topRanking['status'],
                                         avatar: topRanking['avatar'],
                                       ),
                                     );
@@ -199,6 +200,7 @@ class HomeView extends GetView<HomeController> {
                                   username: ranking['username'],
                                   points: ranking['points'],
                                   avatar: ranking['avatar'],
+                                  status: ranking['status'],
                                   isHighlighted: false,
                                 ),
                               );

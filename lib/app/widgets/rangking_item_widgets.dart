@@ -6,6 +6,7 @@ class RankingItem extends StatelessWidget {
   final String username;
   final String points;
   final String avatar;
+  final String status; // New status parameter: "up", "down", or "stable"
   final bool isHighlighted;
 
   const RankingItem({
@@ -15,140 +16,113 @@ class RankingItem extends StatelessWidget {
     required this.username,
     required this.points,
     required this.avatar,
+    required this.status,
     this.isHighlighted = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenWidth = constraints.maxWidth;
-        final isSmallScreen = screenWidth < 350;
-
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
-          decoration: BoxDecoration(
-            color: isHighlighted ? Colors.deepPurple.shade50 : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: isHighlighted
-                ? Border.all(color: Colors.deepPurple.shade200, width: 1.5)
-                : null,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 1),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Rank - Simple text
+          SizedBox(
+            width: 20,
+            child: Text(
+              '$rank',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
-            ],
+            ),
           ),
-          child: Row(
-            children: [
-              // Rank - Fixed width
-              SizedBox(
-                width: isSmallScreen ? 24 : 28,
-                height: isSmallScreen ? 24 : 28,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: _getRankColor(),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$rank',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 11 : 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: isSmallScreen ? 8 : 12),
+          const SizedBox(width: 16),
 
-              // Avatar - Fixed size
-              CircleAvatar(
-                radius: isSmallScreen ? 16 : 18,
-                backgroundImage: NetworkImage(avatar),
-                backgroundColor: Colors.grey.shade200,
-              ),
-              SizedBox(width: isSmallScreen ? 8 : 12),
-
-              // Name and Username - Flexible
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (!isSmallScreen) const SizedBox(height: 2),
-                    Text(
-                      username,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 9 : 11,
-                        color: Colors.grey.shade600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(width: isSmallScreen ? 4 : 8),
-
-              // Points - Flexible but with constraints
-              Flexible(
-                flex: 1,
-                child: Container(
-                  constraints: BoxConstraints(
-                    minWidth: isSmallScreen ? 40 : 50,
-                    maxWidth: isSmallScreen ? 60 : 70,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 4 : 6,
-                    vertical: isSmallScreen ? 2 : 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    points,
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 9 : 11,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
+          // Avatar
+          CircleAvatar(
+            radius: 18,
+            backgroundImage: NetworkImage(avatar),
+            backgroundColor: Colors.grey.shade200,
           ),
-        );
-      },
+          const SizedBox(width: 12),
+
+          // Name and Username
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  username,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+
+          // Status indicator
+          _buildStatusIndicator(),
+          const SizedBox(width: 8),
+
+          // Points - Simple text, right aligned
+          Text(
+            points,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Color _getRankColor() {
-    if (rank <= 3) return Colors.amber;
-    if (rank <= 5) return Colors.deepPurple;
-    if (rank <= 10) return Colors.blue;
-    return Colors.grey;
+  Widget _buildStatusIndicator() {
+    IconData icon;
+    Color color;
+
+    switch (status.toLowerCase()) {
+      case 'up':
+      case 'increase':
+        icon = Icons.keyboard_arrow_up;
+        color = Colors.green;
+        break;
+      case 'down':
+      case 'decrease':
+        icon = Icons.keyboard_arrow_down;
+        color = Colors.red;
+        break;
+      case 'stable':
+      case 'same':
+      default:
+        icon = Icons.remove;
+        color = Colors.grey;
+        break;
+    }
+
+    return Icon(icon, color: color, size: 20);
   }
 }

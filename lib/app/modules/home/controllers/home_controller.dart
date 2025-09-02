@@ -100,6 +100,7 @@ class HomeController extends GetxController {
         'name': 'Gilang Kencana askjdfklj',
         'username': '@gilangkencana',
         'points': '201 Pts',
+        'status': 'up',
         'avatar':
             'https://ui-avatars.com/api/?name=Gilang+Kencana&background=f59e0b&color=fff',
       },
@@ -108,6 +109,7 @@ class HomeController extends GetxController {
         'name': 'Kevin Halim',
         'username': '@kevinhalim',
         'points': '186 Pts',
+        'status': 'stable',
         'avatar':
             'https://ui-avatars.com/api/?name=Kevin+Halim&background=6366f1&color=fff',
       },
@@ -116,6 +118,7 @@ class HomeController extends GetxController {
         'name': 'Narpati Lukita',
         'username': '@narpati',
         'points': '150 Pts',
+        'status': 'down',
         'avatar':
             'https://ui-avatars.com/api/?name=Narpati+Lukita&background=f97316&color=fff',
       },
@@ -124,6 +127,7 @@ class HomeController extends GetxController {
         'name': 'Budiman Mustofa',
         'username': '@budimanmustofa',
         'points': '105 Pts',
+        'status': 'up',
         'avatar':
             'https://ui-avatars.com/api/?name=Budiman+Mustofa&background=8b5cf6&color=fff',
       },
@@ -132,6 +136,7 @@ class HomeController extends GetxController {
         'name': 'Leo Adriansyah',
         'username': '@leo.adrian',
         'points': '100 Pts',
+        'status': 'up',
         'avatar':
             'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
       },
@@ -140,6 +145,7 @@ class HomeController extends GetxController {
         'name': 'Fauzan Pratama',
         'username': '@fauzan',
         'points': '95 Pts',
+        'status': 'down',
         'avatar':
             'https://ui-avatars.com/api/?name=Fauzan+Pratama&background=84cc16&color=fff',
       },
@@ -148,6 +154,7 @@ class HomeController extends GetxController {
         'name': 'Aulia Rahman',
         'username': '@aulia',
         'points': '90 Pts',
+        'status': 'down',
         'avatar':
             'https://ui-avatars.com/api/?name=Aulia+Rahman&background=ec4899&color=fff',
       },
@@ -156,6 +163,7 @@ class HomeController extends GetxController {
         'name': 'Putri Wulandari',
         'username': '@putri',
         'points': '85 Pts',
+        'status': 'stable',
         'avatar':
             'https://ui-avatars.com/api/?name=Putri+Wulandari&background=ef4444&color=fff',
       },
@@ -164,6 +172,7 @@ class HomeController extends GetxController {
         'name': 'Rama Setiawan',
         'username': '@rama',
         'points': '80 Pts',
+        'status': 'up',
         'avatar':
             'https://ui-avatars.com/api/?name=Rama+Setiawan&background=3b82f6&color=fff',
       },
@@ -172,6 +181,7 @@ class HomeController extends GetxController {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
         'points': '78 Pts',
+        'status': 'down',
         'avatar':
             'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
@@ -180,6 +190,7 @@ class HomeController extends GetxController {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
         'points': '78 Pts',
+        'status': 'stable',
         'avatar':
             'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
@@ -188,6 +199,7 @@ class HomeController extends GetxController {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
         'points': '78 Pts',
+        'status': 'up',
         'avatar':
             'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
@@ -196,6 +208,7 @@ class HomeController extends GetxController {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
         'points': '78 Pts',
+        'status': 'down',
         'avatar':
             'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
       },
