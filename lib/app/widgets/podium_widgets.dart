@@ -1,58 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rangking_cabang_olahraga/app/modules/home/controllers/home_controller.dart';
+import 'package:hexcolor/hexcolor.dart';
 
-class PodiumWidget extends StatelessWidget {
+class PodiumWidget extends GetView<HomeController> {
   const PodiumWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return Obx(() {
+      // Access controller data directly
+      final topThree = controller.topThree;
+
+      // Ensure we have at least 3 items for podium
+      if (topThree.length < 3) {
+        return _buildEmptyPodium();
+      }
+
+      return Container(
+        height: 200,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // 2nd Place
+            Flexible(
+              child: PodiumItem(
+                rank: 2,
+                name: topThree[1]['name'] ?? 'Unknown',
+                points: topThree[1]['points']?.toString() ?? '0 Pts',
+                height: 120,
+                color: HexColor("#4D37A5"),
+                avatar: topThree[1]['avatar'] ?? '',
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // 1st Place
+            Flexible(
+              child: PodiumItem(
+                rank: 1,
+                name: topThree[0]['name'] ?? 'Unknown',
+                points: topThree[0]['points']?.toString() ?? '0 Pts',
+                height: 150,
+                color: HexColor("#4D37A5"),
+                avatar: topThree[0]['avatar'] ?? '',
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // 3rd Place
+            Flexible(
+              child: PodiumItem(
+                rank: 3,
+                name: topThree[2]['name'] ?? 'Unknown',
+                points: topThree[2]['points']?.toString() ?? '0 Pts',
+                height: 100,
+                color: HexColor("#4D37A5"),
+                avatar: topThree[2]['avatar'] ?? '',
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  // Show empty state when insufficient data
+  Widget _buildEmptyPodium() {
     return Container(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // 2nd Place
-          Flexible(
-            child: PodiumItem(
-              rank: 2,
-              name: "Kevin Halim",
-              points: "186 Pts",
-              height: 120,
-              color: Colors.grey.shade300,
-              avatar:
-                  "https://ui-avatars.com/api/?name=Kevin+Halim&background=6366f1&color=fff",
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.emoji_events_outlined, size: 48, color: Colors.grey),
+            SizedBox(height: 8),
+            Text(
+              'No rankings yet',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
-
-          // 1st Place
-          Flexible(
-            child: PodiumItem(
-              rank: 1,
-              name: "Gilang Kencana",
-              points: "201 Pts",
-              height: 150,
-              color: Colors.amber.shade300,
-              avatar:
-                  "https://ui-avatars.com/api/?name=Gilang+Kencana&background=f59e0b&color=fff",
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // 3rd Place
-          Flexible(
-            child: PodiumItem(
-              rank: 3,
-              name: "Narpati Lukita",
-              points: "150 Pts",
-              height: 100,
-              color: Colors.orange.shade300,
-              avatar:
-                  "https://ui-avatars.com/api/?name=Narpati+Lukita&background=f97316&color=fff",
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -94,38 +130,58 @@ class PodiumItem extends StatelessWidget {
           ),
 
         // Avatar
-        CircleAvatar(radius: 22, backgroundImage: NetworkImage(avatar)),
+        CircleAvatar(
+          radius: 22,
+          backgroundImage: NetworkImage(avatar),
+          onBackgroundImageError: (_, __) => const Icon(Icons.person),
+        ),
         const SizedBox(height: 6),
 
         // Name - Fixed width and ellipsis
         SizedBox(
           width: 70,
           child: Text(
-            name,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+            name.length > 12 ? "${name.substring(0, 12)}..." : name,
+            style: GoogleFonts.rubik(
+              textStyle: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontSize: 13,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),
+
         const SizedBox(height: 2),
 
-        // Points
-        Text(
-          points,
-          style: TextStyle(
-            fontSize: 9,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white, // background color
+            borderRadius: BorderRadius.circular(8), // rounded corners
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          child: Text(
+            points,
+            style: GoogleFonts.rubik(
+              textStyle: TextStyle(
+                fontSize: 11,
+                color: HexColor("#7E051A"), // <-- text color from hex
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
+
         const SizedBox(height: 6),
 
         // Podium
         Container(
-          width: 70,
+          width: 100,
           height: height,
           decoration: BoxDecoration(
             color: color,
@@ -137,10 +193,12 @@ class PodiumItem extends StatelessWidget {
           child: Center(
             child: Text(
               '$rank',
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              style: GoogleFonts.rubik(
+                textStyle: const TextStyle(
+                  fontSize: 70,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

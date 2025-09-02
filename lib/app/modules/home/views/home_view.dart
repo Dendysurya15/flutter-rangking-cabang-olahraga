@@ -1,9 +1,10 @@
+import 'package:hexcolor/hexcolor.dart';
 import 'package:rangking_cabang_olahraga/app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/filter_button_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/podium_widgets.dart';
-import 'package:rangking_cabang_olahraga/app/widgets/preiod_filter_bottom_sheet.dart';
+import 'package:rangking_cabang_olahraga/app/widgets/period_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/rangking_item_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/region_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/sport_filter_bottom_sheet.dart';
@@ -20,7 +21,7 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: Obx(() => Text('Welcome ${authC.userRole.value.toUpperCase()}')),
         centerTitle: true,
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: HexColor("#7A5AF8"),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -33,193 +34,230 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.deepPurple, Colors.purple],
+      body: Stack(
+        children: [
+          // Solid purple background
+          Container(
+            color: HexColor("#7A5AF8"), // purple (adjust as needed)
           ),
-        ),
-        child: Column(
-          children: [
-            // --- Filters ---
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Obx(
-                () => Row(
-                  children: [
-                    Expanded(
-                      child: FilterButton(
-                        title: "Periode",
-                        subtitle: controller.selectedPeriod.value,
-                        onTap: () => _showPeriodFilter(context),
-                      ),
+
+          // Concentric circles
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 2,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FilterButton(
-                        title: "Cabor",
-                        subtitle: controller.sportsDisplayText,
-                        onTap: () => _showSportFilter(context),
-                      ),
+                  ),
+                ),
+                Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 2,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FilterButton(
-                        title: "Region",
-                        subtitle: controller.regionsDisplayText,
-                        onTap: () => _showRegionFilter(context),
-                      ),
+                  ),
+                ),
+                Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 2,
                     ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Your actual content
+          Column(
+            children: [
+              // --- Filters ---
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Obx(
+                  () => Row(
+                    children: [
+                      Expanded(
+                        child: FilterButton(
+                          title: "Periode",
+                          subtitle: controller.selectedPeriod.value,
+                          onTap: () => _showPeriodFilter(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: FilterButton(
+                          title: "Cabor",
+                          subtitle: controller.sportsDisplayText,
+                          onTap: () => _showSportFilter(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: FilterButton(
+                          title: "Region",
+                          subtitle: controller.regionsDisplayText,
+                          onTap: () => _showRegionFilter(context),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // --- Scrollable Content ---
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  );
-                }
+              // --- Scrollable Content ---
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    );
+                  }
 
-                return RefreshIndicator(
-                  onRefresh: () => controller.refreshData(),
-                  child: CustomScrollView(
-                    controller: controller.scrollController,
-                    slivers: [
-                      // Podium - keep space but make invisible
-                      Obx(
-                        () => SliverToBoxAdapter(
-                          child: AnimatedOpacity(
-                            opacity: controller.isPodiumVisible.value
-                                ? 1.0
-                                : 0.0,
-                            duration: const Duration(milliseconds: 300),
-                            child: SizedBox(
-                              height: 350,
-                              child: controller.topThree.isNotEmpty
-                                  ? DynamicPodiumWidget(
-                                      topThree: controller.topThree,
-                                    )
-                                  : const PodiumWidget(),
+                  return RefreshIndicator(
+                    onRefresh: () => controller.refreshData(),
+                    child: CustomScrollView(
+                      controller: controller.scrollController,
+                      slivers: [
+                        // Podium - keep space but make invisible
+                        Obx(
+                          () => SliverToBoxAdapter(
+                            child: AnimatedOpacity(
+                              opacity: controller.isPodiumVisible.value
+                                  ? 1.0
+                                  : 0.0,
+                              duration: const Duration(milliseconds: 300),
+                              child: const SizedBox(
+                                height: 350,
+                                child:
+                                    PodiumWidget(), // No parameters needed - uses GetX controller directly
+                              ),
                             ),
                           ),
                         ),
-                      ),
 
-                      // Show top 3 in list when podium is invisible
-                      Obx(
-                        () =>
-                            !controller.isPodiumVisible.value &&
-                                controller.topThree.isNotEmpty
-                            ? SliverList(
-                                delegate: SliverChildBuilderDelegate((
-                                  context,
-                                  index,
-                                ) {
-                                  if (index >= controller.topThree.length)
-                                    return null;
+                        Obx(
+                          () =>
+                              !controller.isPodiumVisible.value &&
+                                  controller.topThree.isNotEmpty
+                              ? SliverList(
+                                  delegate: SliverChildBuilderDelegate((
+                                    context,
+                                    index,
+                                  ) {
+                                    if (index >= controller.topThree.length)
+                                      return null;
 
-                                  final topRanking = controller.topThree[index];
-                                  return Container(
-                                    color: Colors.white,
-                                    child: RankingItem(
-                                      rank: topRanking['rank'],
-                                      name: topRanking['name'],
-                                      username: topRanking['username'],
-                                      points: topRanking['points'],
-                                      avatar: topRanking['avatar'],
-                                      isHighlighted:
-                                          index ==
-                                          0, // Highlight #1 when in list
-                                    ),
-                                  );
-                                }, childCount: controller.topThree.length),
-                              )
-                            : const SliverToBoxAdapter(child: SizedBox()),
-                      ),
-
-                      // Regular rankings (rank 4+ or all rankings if no top 3)
-                      Obx(
-                        () => SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            if (index >= controller.rankings.length) {
-                              return null;
-                            }
-                            final ranking = controller.rankings[index];
-                            return Container(
-                              color: Colors.white,
-                              child: RankingItem(
-                                rank: ranking['rank'],
-                                name: ranking['name'],
-                                username: ranking['username'],
-                                points: ranking['points'],
-                                avatar: ranking['avatar'],
-                                isHighlighted: false,
-                              ),
-                            );
-                          }, childCount: controller.rankings.length),
+                                    final topRanking =
+                                        controller.topThree[index];
+                                    return Container(
+                                      color: Colors.white,
+                                      child: RankingItem(
+                                        rank: topRanking['rank'],
+                                        name: topRanking['name'],
+                                        username: topRanking['username'],
+                                        points: topRanking['points'],
+                                        avatar: topRanking['avatar'],
+                                      ),
+                                    );
+                                  }, childCount: controller.topThree.length),
+                                )
+                              : const SliverToBoxAdapter(child: SizedBox()),
                         ),
-                      ),
 
-                      // Empty state
-                      Obx(
-                        () =>
-                            controller.rankings.isEmpty &&
-                                controller.topThree.isEmpty &&
-                                !controller.isLoading.value
-                            ? SliverToBoxAdapter(
-                                child: Container(
-                                  color: Colors.white,
-                                  height: 200,
-                                  child: const Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.search_off,
-                                          size: 64,
-                                          color: Colors.grey,
-                                        ),
-                                        SizedBox(height: 16),
-                                        Text(
-                                          "No rankings found",
-                                          style: TextStyle(
-                                            fontSize: 16,
+                        // Regular rankings (rank 4+ or all rankings if no top 3)
+                        Obx(
+                          () => SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              if (index >= controller.rankings.length) {
+                                return null;
+                              }
+                              final ranking = controller.rankings[index];
+                              return Container(
+                                color: Colors.white,
+                                child: RankingItem(
+                                  rank: ranking['rank'],
+                                  name: ranking['name'],
+                                  username: ranking['username'],
+                                  points: ranking['points'],
+                                  avatar: ranking['avatar'],
+                                  isHighlighted: false,
+                                ),
+                              );
+                            }, childCount: controller.rankings.length),
+                          ),
+                        ),
+
+                        // Empty state
+                        Obx(
+                          () =>
+                              controller.rankings.isEmpty &&
+                                  controller.topThree.isEmpty &&
+                                  !controller.isLoading.value
+                              ? SliverToBoxAdapter(
+                                  child: Container(
+                                    color: Colors.white,
+                                    height: 200,
+                                    child: const Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.search_off,
+                                            size: 64,
                                             color: Colors.grey,
                                           ),
-                                        ),
-                                        Text(
-                                          "Try adjusting your filters",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
+                                          SizedBox(height: 16),
+                                          Text(
+                                            "No rankings found",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            "Try adjusting your filters",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : const SliverToBoxAdapter(child: SizedBox()),
-                      ),
+                                )
+                              : const SliverToBoxAdapter(child: SizedBox()),
+                        ),
 
-                      const SliverToBoxAdapter(child: SizedBox(height: 50)),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
+                        const SliverToBoxAdapter(child: SizedBox(height: 50)),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

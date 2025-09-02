@@ -97,7 +97,7 @@ class HomeController extends GetxController {
     return [
       {
         'rank': 1,
-        'name': 'Gilang Kencana',
+        'name': 'Gilang Kencana askjdfklj',
         'username': '@gilangkencana',
         'points': '201 Pts',
         'avatar':
