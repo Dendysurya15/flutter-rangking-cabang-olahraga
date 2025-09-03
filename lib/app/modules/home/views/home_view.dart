@@ -42,33 +42,33 @@ class HomeView extends GetView<HomeController> {
               }
             });
           },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Summer 2025",
-                style: GoogleFonts.rubik(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white, // keep white for app bar
+          child: Obx(
+            () => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  controller.selectedPeriod.value, // ✅ dynamic now
+                  style: GoogleFonts.rubik(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-
-              const SizedBox(width: 6),
-              // arrow wrapped in circle
-              Container(
-                padding: const EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  color: Colors.white, // faint circle bg
-                  shape: BoxShape.circle,
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.all(1),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.deepPurple,
+                    size: 20,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.deepPurple,
-                  size: 20,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         actions: [
@@ -200,10 +200,11 @@ class HomeView extends GetView<HomeController> {
 
                   return RefreshIndicator(
                     onRefresh: () => controller.refreshData(),
-                    child: CustomScrollView(
+                    child: // Replace your entire CustomScrollView slivers section with this:
+                    CustomScrollView(
                       controller: controller.scrollController,
                       slivers: [
-                        // Podium - keep space but make invisible
+                        // Podium - keep space but make invisible (KEEP THIS AS IS!)
                         Obx(
                           () => SliverToBoxAdapter(
                             child: AnimatedOpacity(
@@ -213,8 +214,7 @@ class HomeView extends GetView<HomeController> {
                               duration: const Duration(milliseconds: 300),
                               child: const SizedBox(
                                 height: 350,
-                                child:
-                                    PodiumWidget(), // No parameters needed - uses GetX controller directly
+                                child: PodiumWidget(),
                               ),
                             ),
                           ),
@@ -226,7 +226,7 @@ class HomeView extends GetView<HomeController> {
                               controller.topThree.isNotEmpty;
 
                           if (hasData) {
-                            // ✅ Rankings exist
+                            // ✅ Rankings exist (KEEP YOUR EXISTING LOGIC!)
                             return SliverToBoxAdapter(
                               child: Container(
                                 decoration: const BoxDecoration(
@@ -311,25 +311,19 @@ class HomeView extends GetView<HomeController> {
                             );
                           } else {
                             // ❌ No data
-                            return SliverToBoxAdapter(
+                            return SliverFillRemaining(
                               child: Container(
-                                width: double.infinity,
-                                height: 400, // adjust as needed
                                 color: Colors.white,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      // 🖼️ Icon placeholder
                                       const Icon(
                                         Icons.description_outlined,
                                         size: 80,
                                         color: Colors.grey,
                                       ),
-
                                       const SizedBox(height: 24),
-
-                                      // 📝 Title
                                       const Text(
                                         "Leaderboard belum tersedia",
                                         style: TextStyle(
@@ -338,10 +332,7 @@ class HomeView extends GetView<HomeController> {
                                           color: Colors.black87,
                                         ),
                                       ),
-
                                       const SizedBox(height: 8),
-
-                                      // 📝 Subtitle
                                       const Text(
                                         "Jadilah yang pertama untuk memulai\npertandingan dan raih posisi terbaikmu!",
                                         textAlign: TextAlign.center,
@@ -350,10 +341,7 @@ class HomeView extends GetView<HomeController> {
                                           color: Colors.black54,
                                         ),
                                       ),
-
                                       const SizedBox(height: 24),
-
-                                      // 🔘 Button
                                       ElevatedButton(
                                         onPressed: () {
                                           // 👉 TODO: add action here
@@ -381,7 +369,26 @@ class HomeView extends GetView<HomeController> {
                           }
                         }),
 
-                        const SliverToBoxAdapter(child: SizedBox(height: 0)),
+                        // ADD THIS: Fill remaining space with white background when there's data
+                        Obx(() {
+                          final hasData =
+                              controller.rankings.isNotEmpty ||
+                              controller.topThree.isNotEmpty;
+
+                          if (hasData) {
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Container(
+                                color: Colors
+                                    .white, // Just white background, nothing else
+                              ),
+                            );
+                          } else {
+                            return const SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            );
+                          }
+                        }),
                       ],
                     ),
                   );

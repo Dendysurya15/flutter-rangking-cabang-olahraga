@@ -146,6 +146,47 @@ class HomeController extends GetxController {
         'season': 'Januari - Maret 2024',
       },
       {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+      {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+      {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+      {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+      {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+
+      {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
         'sport': 'Pickleball',
@@ -242,13 +283,13 @@ class HomeController extends GetxController {
           player['season'] == selectedPeriod.value;
 
       // ADD THIS DETAILED LOGGING:
-      if (sportMatch && regionMatch && typeMatch) {
+      if (sportMatch && regionMatch && typeMatch && periodMatch) {
         print(
-          '✅ ${player['name']} - Sport: ${player['sport']}, Region: ${player['region']}, Type: ${player['type']}',
+          '✅ ${player['name']} - Sport: ${player['sport']}, Region: ${player['region']}, Type: ${player['type']}, Period: ${player['season']}',
         );
       } else {
         print(
-          '❌ ${player['name']} - Sport: ${player['sport']} (${sportMatch ? '✅' : '❌'}), Region: ${player['region']} (${regionMatch ? '✅' : '❌'}), Type: ${player['type']} (${typeMatch ? '✅' : '❌'})',
+          '❌ ${player['name']} - Sport: ${player['sport']} (${sportMatch ? '✅' : '❌'}), Region: ${player['region']} (${regionMatch ? '✅' : '❌'}), Type: ${player['type']} (${typeMatch ? '✅' : '❌'}), Period: ${player['season']} (${periodMatch ? '✅' : '❌'})',
         );
       }
 
@@ -256,9 +297,9 @@ class HomeController extends GetxController {
     }).toList();
 
     // If no matches, show some default data
-    if (filteredPlayers.isEmpty) {
-      filteredPlayers = allPlayers.take(5).toList();
-    }
+    // if (filteredPlayers.isEmpty) {
+    //   filteredPlayers = allPlayers.take(5).toList();
+    // }
 
     print('Total filtered players: ${filteredPlayers.length}');
     print('==================');

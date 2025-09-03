@@ -14,11 +14,6 @@ class PodiumWidget extends GetView<HomeController> {
       // Access controller data directly
       final topThree = controller.topThree;
 
-      // Ensure we have at least 3 items for podium
-      if (topThree.length < 3) {
-        return _buildEmptyPodium();
-      }
-
       return Container(
         height: 200,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -30,11 +25,13 @@ class PodiumWidget extends GetView<HomeController> {
             Flexible(
               child: PodiumItem(
                 rank: 2,
-                name: topThree[1]['name'] ?? 'Unknown',
-                points: topThree[1]['points']?.toString() ?? '0 Pts',
+                name: topThree.length > 1 ? topThree[1]['name'] ?? '-' : '-',
+                points: topThree.length > 1
+                    ? topThree[1]['points']?.toString() ?? '0'
+                    : '0',
                 height: 140,
                 color: HexColor("#4D37A5"),
-                avatar: topThree[1]['avatar'] ?? '',
+                avatar: topThree.length > 1 ? topThree[1]['avatar'] ?? '' : '',
               ),
             ),
             const SizedBox(width: 16),
@@ -43,11 +40,13 @@ class PodiumWidget extends GetView<HomeController> {
             Flexible(
               child: PodiumItem(
                 rank: 1,
-                name: topThree[0]['name'] ?? 'Unknown',
-                points: topThree[0]['points']?.toString() ?? '0 Pts',
+                name: topThree.isNotEmpty ? topThree[0]['name'] ?? '-' : '-',
+                points: topThree.isNotEmpty
+                    ? topThree[0]['points']?.toString() ?? '0'
+                    : '0',
                 height: 170,
                 color: HexColor("#4D37A5"),
-                avatar: topThree[0]['avatar'] ?? '',
+                avatar: topThree.isNotEmpty ? topThree[0]['avatar'] ?? '' : '',
               ),
             ),
             const SizedBox(width: 16),
@@ -56,42 +55,19 @@ class PodiumWidget extends GetView<HomeController> {
             Flexible(
               child: PodiumItem(
                 rank: 3,
-                name: topThree[2]['name'] ?? 'Unknown',
-                points: topThree[2]['points']?.toString() ?? '0 Pts',
+                name: topThree.length > 2 ? topThree[2]['name'] ?? '-' : '-',
+                points: topThree.length > 2
+                    ? topThree[2]['points']?.toString() ?? '0'
+                    : '0',
                 height: 100,
                 color: HexColor("#4D37A5"),
-                avatar: topThree[2]['avatar'] ?? '',
+                avatar: topThree.length > 2 ? topThree[2]['avatar'] ?? '' : '',
               ),
             ),
           ],
         ),
       );
     });
-  }
-
-  // Show empty state when insufficient data
-  Widget _buildEmptyPodium() {
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.emoji_events_outlined, size: 48, color: Colors.grey),
-            SizedBox(height: 8),
-            Text(
-              'No rankings yet',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -127,8 +103,11 @@ class PodiumItem extends StatelessWidget {
             // Avatar
             CircleAvatar(
               radius: 22,
-              backgroundImage: NetworkImage(avatar),
-              onBackgroundImageError: (_, __) => const Icon(Icons.person),
+              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
+              backgroundColor: Colors.grey.shade200,
+              child: avatar.isEmpty
+                  ? const Icon(Icons.person, color: Colors.grey)
+                  : null,
             ),
 
             // Crown for 1st place - positioned on top of avatar
@@ -181,7 +160,7 @@ class PodiumItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            points,
+            '$points Pts',
             style: GoogleFonts.rubik(
               textStyle: TextStyle(
                 fontSize: 11,

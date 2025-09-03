@@ -28,7 +28,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
   }
 
   final List<String> regions = [
-    "DKI Jakarta",
+    "Jakarta",
     "Tangerang",
     "Bekasi",
     "Bogor",

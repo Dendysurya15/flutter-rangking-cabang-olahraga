@@ -54,8 +54,13 @@ class RankingItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundImage: NetworkImage(avatar),
+                backgroundImage: avatar.isNotEmpty
+                    ? NetworkImage(avatar)
+                    : null,
                 backgroundColor: Colors.grey.shade200,
+                child: avatar.isEmpty
+                    ? const Icon(Icons.person, color: Colors.grey)
+                    : null,
               ),
 
               if (rank == 1)
@@ -116,7 +121,7 @@ class RankingItem extends StatelessWidget {
               children: [
                 _buildStatusIndicator(), // Top right
                 Text(
-                  "$points",
+                  "$points Pts",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
