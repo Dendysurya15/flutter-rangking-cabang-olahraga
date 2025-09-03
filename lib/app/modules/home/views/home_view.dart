@@ -259,6 +259,9 @@ class HomeView extends GetView<HomeController> {
                                                       topRanking['username'],
                                                   points: topRanking['points'],
                                                   avatar: topRanking['avatar'],
+                                                  secondAvatar:
+                                                      topRanking['secondAvatar'] ??
+                                                      '', // ADD THIS
                                                   status: topRanking['status'],
                                                 );
                                               },
@@ -278,6 +281,9 @@ class HomeView extends GetView<HomeController> {
                                                 username: ranking['username'],
                                                 points: ranking['points'],
                                                 avatar: ranking['avatar'],
+                                                secondAvatar:
+                                                    ranking['secondAvatar'] ??
+                                                    '', // ADD THIS
                                                 status: ranking['status'],
                                                 isHighlighted: false,
                                               );

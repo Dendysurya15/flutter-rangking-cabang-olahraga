@@ -176,7 +176,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
                               color: isSelected
                                   ? const Color(0xFF7A5AF8)
                                   : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: isSelected
                                     ? const Color(0xFF7A5AF8)

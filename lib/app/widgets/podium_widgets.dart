@@ -11,8 +11,8 @@ class PodiumWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Access controller data directly
       final topThree = controller.topThree;
+      final isGandaType = controller.selectedGameType.value == "Ganda";
 
       return Container(
         height: 200,
@@ -32,6 +32,10 @@ class PodiumWidget extends GetView<HomeController> {
                 height: 140,
                 color: HexColor("#4D37A5"),
                 avatar: topThree.length > 1 ? topThree[1]['avatar'] ?? '' : '',
+                secondAvatar: isGandaType && topThree.length > 1
+                    ? topThree[1]['secondAvatar'] ?? ''
+                    : '',
+                isGandaType: isGandaType,
               ),
             ),
             const SizedBox(width: 16),
@@ -47,6 +51,10 @@ class PodiumWidget extends GetView<HomeController> {
                 height: 170,
                 color: HexColor("#4D37A5"),
                 avatar: topThree.isNotEmpty ? topThree[0]['avatar'] ?? '' : '',
+                secondAvatar: isGandaType && topThree.isNotEmpty
+                    ? topThree[0]['secondAvatar'] ?? ''
+                    : '',
+                isGandaType: isGandaType,
               ),
             ),
             const SizedBox(width: 16),
@@ -62,6 +70,10 @@ class PodiumWidget extends GetView<HomeController> {
                 height: 100,
                 color: HexColor("#4D37A5"),
                 avatar: topThree.length > 2 ? topThree[2]['avatar'] ?? '' : '',
+                secondAvatar: isGandaType && topThree.length > 2
+                    ? topThree[2]['secondAvatar'] ?? ''
+                    : '',
+                isGandaType: isGandaType,
               ),
             ),
           ],
@@ -78,6 +90,8 @@ class PodiumItem extends StatelessWidget {
   final double height;
   final Color color;
   final String avatar;
+  final String secondAvatar;
+  final bool isGandaType;
 
   const PodiumItem({
     super.key,
@@ -87,6 +101,8 @@ class PodiumItem extends StatelessWidget {
     required this.height,
     required this.color,
     required this.avatar,
+    required this.secondAvatar,
+    required this.isGandaType,
   });
 
   @override
@@ -95,45 +111,11 @@ class PodiumItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Avatar with stacked crown for 1st place
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            // Avatar
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
-              backgroundColor: Colors.grey.shade200,
-              child: avatar.isEmpty
-                  ? const Icon(Icons.person, color: Colors.grey)
-                  : null,
-            ),
-
-            // Crown for 1st place - positioned on top of avatar
-            if (rank == 1)
-              Positioned(
-                bottom:
-                    -8, // Adjust this value to position crown higher or lower
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.amber,
-                    border: Border.all(color: HexColor("#7A5AF8"), width: 1.5),
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  child: const FaIcon(
-                    FontAwesomeIcons.crown, // Font Awesome crown icon
-                    color: Colors.white,
-                    size: 10,
-                  ),
-                ),
-              ),
-          ],
-        ),
+        // Avatar section
+        _buildAvatarSection(),
         const SizedBox(height: 6),
 
-        // Name - Fixed width and ellipsis
+        // Name
         SizedBox(
           width: 70,
           child: Text(
@@ -153,6 +135,7 @@ class PodiumItem extends StatelessWidget {
 
         const SizedBox(height: 2),
 
+        // Points container
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
@@ -175,7 +158,7 @@ class PodiumItem extends StatelessWidget {
 
         const SizedBox(height: 6),
 
-        // Replace the Container with this updated version:
+        // Podium base
         Container(
           width: 100,
           height: height,
@@ -187,9 +170,9 @@ class PodiumItem extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(top: 5), // Add top padding
+            padding: const EdgeInsets.only(top: 5),
             child: Align(
-              alignment: Alignment.topCenter, // Align to top center
+              alignment: Alignment.topCenter,
               child: Text(
                 '$rank',
                 style: GoogleFonts.rubik(
@@ -205,5 +188,114 @@ class PodiumItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildAvatarSection() {
+    if (isGandaType && secondAvatar.isNotEmpty) {
+      // IMPROVED: Compact overlapping for Ganda (doubles)
+      return SizedBox(
+        width: 60, // Fixed width to control spacing
+        height: 50,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            // First avatar (back)
+            Positioned(
+              left: -5,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: HexColor("#7A5AF8"), width: 2),
+                ),
+                child: CircleAvatar(
+                  radius: 20, // Slightly smaller than original 22
+                  backgroundImage: avatar.isNotEmpty
+                      ? NetworkImage(avatar)
+                      : null,
+                  backgroundColor: Colors.grey.shade200,
+                  child: avatar.isEmpty
+                      ? const Icon(Icons.person, color: Colors.grey, size: 18)
+                      : null,
+                ),
+              ),
+            ),
+            // Second avatar (front) - overlapping
+            Positioned(
+              left: 25, // Overlap by half for compact look
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: HexColor("#7A5AF8"), width: 2),
+                ),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: secondAvatar.isNotEmpty
+                      ? NetworkImage(secondAvatar)
+                      : null,
+                  backgroundColor: Colors.grey.shade200,
+                  child: secondAvatar.isEmpty
+                      ? const Icon(Icons.person, color: Colors.grey, size: 18)
+                      : null,
+                ),
+              ),
+            ),
+            // Crown for 1st place - centered between avatars
+            if (rank == 1)
+              Positioned(
+                bottom: -4,
+                left: 20, // Center position between overlapping avatars
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.amber,
+                    border: Border.all(color: HexColor("#7A5AF8"), width: 1.5),
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: const FaIcon(
+                    FontAwesomeIcons.crown,
+                    color: Colors.white,
+                    size: 11,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    } else {
+      // Display single avatar for Tunggal (singles) - unchanged
+      return Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
+            backgroundColor: Colors.grey.shade200,
+            child: avatar.isEmpty
+                ? const Icon(Icons.person, color: Colors.grey)
+                : null,
+          ),
+          // Crown for 1st place
+          if (rank == 1)
+            Positioned(
+              bottom: -8,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.amber,
+                  border: Border.all(color: HexColor("#7A5AF8"), width: 1.5),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: const FaIcon(
+                  FontAwesomeIcons.crown,
+                  color: Colors.white,
+                  size: 10,
+                ),
+              ),
+            ),
+        ],
+      );
+    }
   }
 }

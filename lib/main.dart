@@ -42,9 +42,10 @@ class MyApp extends StatelessWidget {
             child: GetMaterialApp(
               title: 'Restaurant App with Supabase',
               debugShowCheckedModeBanner: false,
-              initialRoute: user != null && user.emailConfirmedAt != null
-                  ? Routes.HOME
-                  : Routes.LOGIN,
+              // initialRoute: user != null && user.emailConfirmedAt != null
+              //     ? Routes.HOME
+              //     : Routes.LOGIN,
+              initialRoute: Routes.HOME,
               getPages: AppPages.routes,
               theme: ThemeData(primarySwatch: Colors.blue),
             ),

@@ -5,8 +5,10 @@ class HomeController extends GetxController {
   // --- Filters ---
   var selectedPeriod = "Summer 2025".obs;
   var selectedSports = <String>["Tenis Meja"].obs;
-  var selectedRegions = <String>[].obs; // Changed to List for multi-select
-  var selectedGameType = "Tunggal".obs;
+  var selectedRegions = <String>[
+    "Jakarta",
+  ].obs; // Changed to List for multi-select
+  var selectedGameType = "Ganda".obs;
 
   // --- Rankings ---
   var rankings = <Map<String, dynamic>>[].obs;
@@ -90,6 +92,10 @@ class HomeController extends GetxController {
   }
 
   // Generate rankings based on current filters
+  // Replace your getDummyRankingsForFilters() method with this updated version:
+
+  // Replace your getDummyRankingsForFilters() method with this updated version:
+
   List<Map<String, dynamic>> getDummyRankingsForFilters() {
     print('=== FILTER DEBUG ===');
     print('Selected Sports: ${selectedSports.toList()}');
@@ -98,7 +104,7 @@ class HomeController extends GetxController {
     print('Selected Period: ${selectedPeriod.value}');
     print('==================');
 
-    // Expanded players pool with more regions
+    // Add some Ganda players to your existing allPlayers list
     List<Map<String, dynamic>> allPlayers = [
       // --- Summer 2025 ---
       {
@@ -166,6 +172,128 @@ class HomeController extends GetxController {
         'season': 'Summer 2025',
       },
 
+      // ADD GANDA PLAYERS FOR SUMMER 2025
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Adi Pratama & Budi Santoso',
+        'username': '@adipratama & @budisantoso',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Sari Dewi & Maya Putri',
+        'username': '@saridewi & @mayaputri',
+        'sport': 'Tenis Meja',
+        'region': 'Bandung',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Roni Jakarta & Doni Bekasi',
+        'username': '@ronijakarta & @donibekasi',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
+        'season': 'Summer 2025',
+      },
+
       // --- Januari - Maret 2024 ---
       {
         'name': 'Gilang Kencana',
@@ -205,6 +333,16 @@ class HomeController extends GetxController {
         'sport': 'Tenis',
         'region': 'Bogor',
         'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+
+      // ADD GANDA PLAYERS FOR JANUARI - MARET 2024
+      {
+        'name': 'Kevin Surabaya & Lina Jakarta',
+        'username': '@kevinlina',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Ganda',
         'season': 'Januari - Maret 2024',
       },
 
@@ -310,25 +448,49 @@ class HomeController extends GetxController {
     print('Total filtered players: ${filteredPlayers.length}');
     print('==================');
 
-    // Generate rankings with points based on filters and period
+    // Generate rankings with support for second avatar
     List<Map<String, dynamic>> rankings = [];
 
     for (int i = 0; i < filteredPlayers.length; i++) {
       var player = filteredPlayers[i];
 
-      // Vary points based on period
+      // Calculate points
       int basePoints = 200 - (i * 15);
       int periodMultiplier = _getPeriodMultiplier();
       int finalPoints = (basePoints * periodMultiplier / 100).round();
 
+      String displayName = player['name'];
+      String firstAvatar = '';
+      String secondAvatar = '';
+
+      // Check if this is a Ganda player with "&" in name
+      if (player['type'] == 'Ganda' && player['name'].contains(' & ')) {
+        List<String> playerNames = player['name'].split(' & ');
+        String firstName = playerNames[0].trim();
+        String secondName = playerNames.length > 1
+            ? playerNames[1].trim()
+            : 'Partner';
+
+        // Generate separate avatars for each player
+        firstAvatar =
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(firstName)}&background=${_getRandomColor()}&color=fff';
+        secondAvatar =
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(secondName)}&background=${_getRandomColor()}&color=fff';
+      } else {
+        // For Tunggal players or Ganda without "&", use single avatar
+        firstAvatar =
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(player['name'])}&background=${_getRandomColor()}&color=fff';
+        secondAvatar = ''; // Empty for single players
+      }
+
       rankings.add({
         'rank': i + 1,
-        'name': player['name'],
+        'name': displayName,
         'username': player['username'],
         'points': '$finalPoints',
         'status': _getRandomStatus(i),
-        'avatar':
-            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(player['name'])}&background=${_getRandomColor()}&color=fff',
+        'avatar': firstAvatar,
+        'secondAvatar': secondAvatar,
       });
     }
 
