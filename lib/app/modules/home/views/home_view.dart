@@ -451,15 +451,17 @@ class HomeView extends GetView<HomeController> {
       ),
       isScrollControlled: true,
       builder: (context) => RegionFilterBottomSheet(
-        currentSelection:
-            controller.selectedRegion.value, // pass a single value
+        currentSelections: controller.selectedRegions
+            .toList(), // Pass current selections
       ),
-    ).then((selectedRegion) {
-      if (selectedRegion != null && selectedRegion is String) {
-        controller.updateRegion(selectedRegion); // update single region
+    ).then((selectedRegions) {
+      if (selectedRegions != null && selectedRegions is List<String>) {
+        controller.updateRegions(selectedRegions); // Update with list
         Get.snackbar(
           "Filter Applied",
-          "Region updated: ${controller.selectedRegion}", // show single value
+          selectedRegions.isEmpty
+              ? "All regions selected"
+              : "Regions updated: ${controller.regionDisplayText}",
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 2),
           backgroundColor: Colors.deepPurple,

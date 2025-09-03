@@ -5,7 +5,7 @@ class HomeController extends GetxController {
   // --- Filters ---
   var selectedPeriod = "Summer 2025".obs;
   var selectedSports = <String>["Tenis Meja"].obs;
-  var selectedRegion = "All Region".obs;
+  var selectedRegions = <String>[].obs; // Changed to List for multi-select
   var selectedGameType = "Tunggal".obs;
 
   // --- Rankings ---
@@ -51,8 +51,8 @@ class HomeController extends GetxController {
     fetchRankings();
   }
 
-  void updateRegion(String region) {
-    selectedRegion.value = region;
+  void updateRegions(List<String> regions) {
+    selectedRegions.assignAll(regions);
     fetchRankings();
   }
 
@@ -62,8 +62,6 @@ class HomeController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 500));
 
       var allRankings = getDummyRankingsForFilters();
-
-      // ADD THIS LOG:
       print('📊 All Rankings count: ${allRankings.length}');
 
       topThree.assignAll(allRankings.take(3).toList());
@@ -86,106 +84,105 @@ class HomeController extends GetxController {
   }
 
   String get regionDisplayText {
-    if (selectedRegion.value.isEmpty || selectedRegion.value == "All Region") {
-      return "All Region";
-    }
-    return selectedRegion.value;
+    if (selectedRegions.isEmpty) return "All Region";
+    if (selectedRegions.length == 1) return selectedRegions.first;
+    return "${selectedRegions.first} +${selectedRegions.length - 1}";
   }
 
   // Generate rankings based on current filters
   List<Map<String, dynamic>> getDummyRankingsForFilters() {
     print('=== FILTER DEBUG ===');
     print('Selected Sports: ${selectedSports.toList()}');
-    print('Selected Regions: ${selectedRegion}');
+    print('Selected Regions: ${selectedRegions.toList()}');
     print('Selected Game Type: ${selectedGameType.value}');
     print('Selected Period: ${selectedPeriod.value}');
     print('==================');
-    // Base players pool
+
+    // Expanded players pool with more regions
     List<Map<String, dynamic>> allPlayers = [
-      // --- All Time ---
+      // --- Summer 2025 ---
+      {
+        'name': 'Jakarta Tennis Pro',
+        'username': '@jakartatennis',
+        'sport': 'Tenis',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
       {
         'name': 'Andi Badminton',
         'username': '@andibad',
         'sport': 'Badminton',
         'region': 'Jakarta',
         'type': 'Tunggal',
-        'season': 'All Time',
+        'season': 'Summer 2025',
       },
       {
-        'name': 'Leo Adriansyah',
-        'username': '@leo.adrian',
-        'sport': 'Tenis',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'All Time',
-      },
-      {
-        'name': 'Rama Setiawan',
-        'username': '@rama',
-        'sport': 'Mini Soccer',
+        'name': 'Bandung Pingpong',
+        'username': '@bandungping',
+        'sport': 'Tenis Meja',
         'region': 'Bandung',
-        'type': 'Komunitas',
-        'season': 'All Time',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Surabaya Champion',
+        'username': '@sbychamp',
+        'sport': 'Tenis Meja',
+        'region': 'Surabaya',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Bogor Tennis Star',
+        'username': '@bogorstar',
+        'sport': 'Tenis',
+        'region': 'Bogor',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Yogya Master',
+        'username': '@yogyamaster',
+        'sport': 'Tenis Meja',
+        'region': 'Yogyakarta',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Medan Pro Player',
+        'username': '@medanpro',
+        'sport': 'Badminton',
+        'region': 'Medan',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
+      },
+      {
+        'name': 'Bali Tennis Ace',
+        'username': '@baliace',
+        'sport': 'Tenis',
+        'region': 'Bali',
+        'type': 'Tunggal',
+        'season': 'Summer 2025',
       },
 
       // --- Januari - Maret 2024 ---
+      {
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
       {
         'name': 'Budi Racket',
         'username': '@budiracket',
         'sport': 'Badminton',
         'region': 'Surabaya',
-        'type': 'Komunitas',
-        'season': 'Januari - Maret 2024',
-      },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
         'type': 'Tunggal',
         'season': 'Januari - Maret 2024',
       },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'Januari - Maret 2024',
-      },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'Januari - Maret 2024',
-      },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'Januari - Maret 2024',
-      },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'Januari - Maret 2024',
-      },
-      {
-        'name': 'Gilang Kencana',
-        'username': '@gilangkencana',
-        'sport': 'Tenis Meja',
-        'region': 'Jakarta',
-        'type': 'Tunggal',
-        'season': 'Januari - Maret 2024',
-      },
-
       {
         'name': 'Dinda Cahyani',
         'username': '@dinda',
@@ -194,16 +191,24 @@ class HomeController extends GetxController {
         'type': 'Tunggal',
         'season': 'Januari - Maret 2024',
       },
+      {
+        'name': 'Bandung Star',
+        'username': '@bandungstar',
+        'sport': 'Tenis Meja',
+        'region': 'Bandung',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+      {
+        'name': 'Bogor Champion',
+        'username': '@bogorchamp',
+        'sport': 'Tenis',
+        'region': 'Bogor',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
 
       // --- Oktober - Desember 2023 ---
-      {
-        'name': 'Sari Shuttlecock',
-        'username': '@sarishuttle',
-        'sport': 'Badminton',
-        'region': 'Bandung',
-        'type': 'Ganda',
-        'season': 'Oktober - Desember 2023',
-      },
       {
         'name': 'Kevin Halim',
         'username': '@kevinhalim',
@@ -213,19 +218,35 @@ class HomeController extends GetxController {
         'season': 'Oktober - Desember 2023',
       },
       {
-        'name': 'Squash Master',
-        'username': '@squashmaster',
-        'sport': 'Squash',
-        'region': 'Surabaya',
+        'name': 'Sari Shuttlecock',
+        'username': '@sarishuttle',
+        'sport': 'Badminton',
+        'region': 'Bandung',
         'type': 'Ganda',
         'season': 'Oktober - Desember 2023',
       },
       {
-        'name': 'Padel King',
-        'username': '@padelking',
-        'sport': 'Padel',
+        'name': 'Jakarta Tennis Pro 2023',
+        'username': '@jkttennis23',
+        'sport': 'Tenis',
         'region': 'Jakarta',
-        'type': 'Komunitas',
+        'type': 'Tunggal',
+        'season': 'Oktober - Desember 2023',
+      },
+      {
+        'name': 'Surabaya Pingpong',
+        'username': '@sbyping',
+        'sport': 'Tenis Meja',
+        'region': 'Surabaya',
+        'type': 'Tunggal',
+        'season': 'Oktober - Desember 2023',
+      },
+      {
+        'name': 'Bogor Tennis Legend',
+        'username': '@bogorlegend',
+        'sport': 'Tenis',
+        'region': 'Bogor',
+        'type': 'Tunggal',
         'season': 'Oktober - Desember 2023',
       },
 
@@ -247,19 +268,11 @@ class HomeController extends GetxController {
         'season': 'Juli - Agustus 2023',
       },
       {
-        'name': 'Soccer Pro',
-        'username': '@soccerpro',
-        'sport': 'Mini Soccer',
-        'region': 'Surabaya',
-        'type': 'Komunitas',
-        'season': 'Juli - Agustus 2023',
-      },
-      {
-        'name': 'Pickle Master',
-        'username': '@picklemaster',
-        'sport': 'Pickleball',
+        'name': 'Medan Table Tennis',
+        'username': '@medantt',
+        'sport': 'Tenis Meja',
         'region': 'Medan',
-        'type': 'Ganda',
+        'type': 'Tunggal',
         'season': 'Juli - Agustus 2023',
       },
     ];
@@ -272,9 +285,7 @@ class HomeController extends GetxController {
           selectedSports.contains("All Sports");
 
       bool regionMatch =
-          selectedRegion.value.isEmpty ||
-          selectedRegion.value == "All Region" ||
-          selectedRegion.value == player['region'];
+          selectedRegions.isEmpty || selectedRegions.contains(player['region']);
 
       bool typeMatch = player['type'] == selectedGameType.value;
 
@@ -282,7 +293,7 @@ class HomeController extends GetxController {
           selectedPeriod.value == "All Time" ||
           player['season'] == selectedPeriod.value;
 
-      // ADD THIS DETAILED LOGGING:
+      // Detailed logging
       if (sportMatch && regionMatch && typeMatch && periodMatch) {
         print(
           '✅ ${player['name']} - Sport: ${player['sport']}, Region: ${player['region']}, Type: ${player['type']}, Period: ${player['season']}',
@@ -295,11 +306,6 @@ class HomeController extends GetxController {
 
       return sportMatch && regionMatch && typeMatch && periodMatch;
     }).toList();
-
-    // If no matches, show some default data
-    // if (filteredPlayers.isEmpty) {
-    //   filteredPlayers = allPlayers.take(5).toList();
-    // }
 
     print('Total filtered players: ${filteredPlayers.length}');
     print('==================');
@@ -319,7 +325,7 @@ class HomeController extends GetxController {
         'rank': i + 1,
         'name': player['name'],
         'username': player['username'],
-        'points': '$finalPoints Pts',
+        'points': '$finalPoints',
         'status': _getRandomStatus(i),
         'avatar':
             'https://ui-avatars.com/api/?name=${Uri.encodeComponent(player['name'])}&background=${_getRandomColor()}&color=fff',
@@ -332,12 +338,12 @@ class HomeController extends GetxController {
   int _getPeriodMultiplier() {
     switch (selectedPeriod.value) {
       case "All Time":
-        return 150; // Higher points for all time
+        return 150;
       case "Summer 2025":
       case "Januari - Maret 2024":
-        return 100; // Current points
+        return 100;
       case "Oktober - Desember 2023":
-        return 80; // Lower points for older periods
+        return 80;
       case "Juli - Agustus 2023":
         return 60;
       default:

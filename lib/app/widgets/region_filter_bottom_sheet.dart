@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RegionFilterBottomSheet extends StatefulWidget {
-  final String? currentSelection;
+  final List<String>? currentSelections;
 
-  const RegionFilterBottomSheet({super.key, this.currentSelection});
+  const RegionFilterBottomSheet({super.key, this.currentSelections});
 
   @override
   State<RegionFilterBottomSheet> createState() =>
@@ -11,14 +11,14 @@ class RegionFilterBottomSheet extends StatefulWidget {
 }
 
 class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
-  String? selectedRegion;
+  List<String> selectedRegions = [];
   String searchQuery = "";
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    selectedRegion = widget.currentSelection;
+    selectedRegions = widget.currentSelections?.toList() ?? [];
   }
 
   @override
@@ -37,6 +37,17 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
     "Yogyakarta",
     "Surabaya",
     "Malang",
+    "Bali",
+    "Medan",
+    "Semarang",
+    "Palembang",
+    "Makassar",
+    "Balikpapan",
+    "Manado",
+    "Pontianak",
+    "Jayapura",
+    "Denpasar",
+    "Solo",
   ];
 
   List<String> get filteredRegions {
@@ -73,7 +84,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           ),
           const SizedBox(height: 20),
 
-          // Title
+          // Title and Close
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -135,67 +146,134 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           ),
           const SizedBox(height: 20),
 
-          // Region list
+          // Region display - chips when no search, list when searching
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredRegions.length,
-              itemBuilder: (context, index) {
-                final region = filteredRegions[index];
-                final isSelected = selectedRegion == region;
+            child: searchQuery.isEmpty
+                ? // Chips layout when not searching
+                  SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: filteredRegions.map((region) {
+                        final isSelected = selectedRegions.contains(region);
 
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedRegion = region;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey.shade200,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: RichText(
-                            text: _buildHighlightedText(region, searchQuery),
-                          ),
-                        ),
-                        Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isSelected) {
+                                selectedRegions.remove(region);
+                              } else {
+                                selectedRegions.add(region);
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
                               color: isSelected
                                   ? const Color(0xFF7A5AF8)
-                                  : Colors.grey.shade400,
-                              width: 2,
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFF7A5AF8)
+                                    : Colors.grey.shade300,
+                                width: 1,
+                              ),
                             ),
-                            color: isSelected ? const Color(0xFF7A5AF8) : null,
+                            child: Text(
+                              region,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.black87,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                              ),
+                            ),
                           ),
-                          child: isSelected
-                              ? const Icon(
-                                  Icons.check,
-                                  size: 14,
-                                  color: Colors.white,
-                                )
-                              : null,
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
+                  )
+                : // List layout when searching
+                  ListView.builder(
+                    itemCount: filteredRegions.length,
+                    itemBuilder: (context, index) {
+                      final region = filteredRegions[index];
+                      final isSelected = selectedRegions.contains(region);
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              selectedRegions.remove(region);
+                            } else {
+                              selectedRegions.add(region);
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF7A5AF8).withOpacity(0.1)
+                                : null,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.shade200,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: _buildHighlightedText(
+                                    region,
+                                    searchQuery,
+                                    isSelected,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xFF7A5AF8)
+                                        : Colors.grey.shade400,
+                                    width: 2,
+                                  ),
+                                  color: isSelected
+                                      ? const Color(0xFF7A5AF8)
+                                      : null,
+                                ),
+                                child: isSelected
+                                    ? const Icon(
+                                        Icons.check,
+                                        size: 14,
+                                        color: Colors.white,
+                                      )
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
 
           const SizedBox(height: 20),
@@ -204,13 +282,9 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: selectedRegion != null
-                  ? () => Navigator.pop(context, selectedRegion)
-                  : null,
+              onPressed: () => Navigator.pop(context, selectedRegions),
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedRegion != null
-                    ? const Color(0xFF7A5AF8)
-                    : Colors.grey.shade300,
+                backgroundColor: const Color(0xFF7A5AF8),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -218,9 +292,14 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                "Terapkan",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              child: Text(
+                selectedRegions.isEmpty
+                    ? "Pilih All Region"
+                    : "Terapkan (${selectedRegions.length})",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -229,9 +308,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
     );
   }
 
-  TextSpan _buildHighlightedText(String text, String query) {
-    final isSelected = selectedRegion == text;
-
+  TextSpan _buildHighlightedText(String text, String query, bool isSelected) {
     if (query.isEmpty) {
       return TextSpan(
         text: text,
@@ -277,6 +354,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
         );
       }
 
+      // Highlighted search match
       spans.add(
         TextSpan(
           text: text.substring(index, index + query.length),
