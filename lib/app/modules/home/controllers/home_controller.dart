@@ -5,14 +5,13 @@ class HomeController extends GetxController {
   // --- Filters ---
   var selectedPeriod = "Summer 2025".obs;
   var selectedSports = <String>["Tenis Meja"].obs;
-  var selectedRegions = <String>["All Region"].obs;
+  var selectedRegion = "All Region".obs;
+  var selectedGameType = "Tunggal".obs;
 
   // --- Rankings ---
   var rankings = <Map<String, dynamic>>[].obs;
   var topThree = <Map<String, dynamic>>[].obs;
   var isLoading = false.obs;
-  // Add this to your controller
-  var selectedGameType = "Tunggal".obs;
 
   // --- Scroll + Podium visibility ---
   final scrollController = ScrollController();
@@ -25,13 +24,11 @@ class HomeController extends GetxController {
     fetchRankings();
   }
 
-  // Add this method
   void updateGameType(String gameType) {
     selectedGameType.value = gameType;
     fetchRankings();
   }
 
-  // Toggle podium visibility based on scroll
   void _scrollListener() {
     if (scrollController.offset > 250) {
       if (isPodiumVisible.value) {
@@ -44,7 +41,6 @@ class HomeController extends GetxController {
     }
   }
 
-  // --- Filters update ---
   void updatePeriod(String period) {
     selectedPeriod.value = period;
     fetchRankings();
@@ -55,22 +51,21 @@ class HomeController extends GetxController {
     fetchRankings();
   }
 
-  void updateRegions(List<String> regions) {
-    selectedRegions.assignAll(regions);
+  void updateRegion(String region) {
+    selectedRegion.value = region;
     fetchRankings();
   }
 
-  // --- Fetch rankings (dummy) ---
   Future<void> fetchRankings() async {
     try {
       isLoading.value = true;
-
-      // Simulate API delay
       await Future.delayed(const Duration(milliseconds: 500));
 
-      var allRankings = getDummyRankings();
+      var allRankings = getDummyRankingsForFilters();
 
-      // Split into top3 + rest
+      // ADD THIS LOG:
+      print('📊 All Rankings count: ${allRankings.length}');
+
       topThree.assignAll(allRankings.take(3).toList());
       rankings.assignAll(allRankings.skip(3).toList());
     } catch (e) {
@@ -80,146 +75,253 @@ class HomeController extends GetxController {
     }
   }
 
-  // --- Refresh ---
   Future<void> refreshData() async {
     await fetchRankings();
   }
 
-  // --- Display text for filters ---
   String get sportsDisplayText {
     if (selectedSports.isEmpty) return "All Sports";
     if (selectedSports.length == 1) return selectedSports.first;
     return "${selectedSports.first} +${selectedSports.length - 1}";
   }
 
-  String get regionsDisplayText {
-    if (selectedRegions.isEmpty || selectedRegions.contains("All Region")) {
+  String get regionDisplayText {
+    if (selectedRegion.value.isEmpty || selectedRegion.value == "All Region") {
       return "All Region";
     }
-    if (selectedRegions.length == 1) return selectedRegions.first;
-    return "${selectedRegions.first} +${selectedRegions.length - 1}";
+    return selectedRegion.value;
   }
 
-  // --- Dummy data ---
-  List<Map<String, dynamic>> getDummyRankings() {
-    return [
+  // Generate rankings based on current filters
+  List<Map<String, dynamic>> getDummyRankingsForFilters() {
+    print('=== FILTER DEBUG ===');
+    print('Selected Sports: ${selectedSports.toList()}');
+    print('Selected Regions: ${selectedRegion}');
+    print('Selected Game Type: ${selectedGameType.value}');
+    print('Selected Period: ${selectedPeriod.value}');
+    print('==================');
+    // Base players pool
+    List<Map<String, dynamic>> allPlayers = [
+      // --- All Time ---
       {
-        'rank': 1,
-        'name': 'Gilang Kencana askjdfklj',
-        'username': '@gilangkencana',
-        'points': '201 Pts',
-        'status': 'up',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Gilang+Kencana&background=f59e0b&color=fff',
+        'name': 'Andi Badminton',
+        'username': '@andibad',
+        'sport': 'Badminton',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'All Time',
       },
       {
-        'rank': 2,
-        'name': 'Kevin Halim',
-        'username': '@kevinhalim',
-        'points': '186 Pts',
-        'status': 'stable',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Kevin+Halim&background=6366f1&color=fff',
-      },
-      {
-        'rank': 3,
-        'name': 'Narpati Lukita',
-        'username': '@narpati',
-        'points': '150 Pts',
-        'status': 'down',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Narpati+Lukita&background=f97316&color=fff',
-      },
-      {
-        'rank': 4,
-        'name': 'Budiman Mustofa',
-        'username': '@budimanmustofa',
-        'points': '105 Pts',
-        'status': 'up',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Budiman+Mustofa&background=8b5cf6&color=fff',
-      },
-      {
-        'rank': 5,
         'name': 'Leo Adriansyah',
         'username': '@leo.adrian',
-        'points': '100 Pts',
-        'status': 'up',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Leo+Adriansyah&background=06b6d4&color=fff',
+        'sport': 'Tenis',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'All Time',
       },
       {
-        'rank': 6,
-        'name': 'Fauzan Pratama',
-        'username': '@fauzan',
-        'points': '95 Pts',
-        'status': 'down',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Fauzan+Pratama&background=84cc16&color=fff',
-      },
-      {
-        'rank': 7,
-        'name': 'Aulia Rahman',
-        'username': '@aulia',
-        'points': '90 Pts',
-        'status': 'down',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Aulia+Rahman&background=ec4899&color=fff',
-      },
-      {
-        'rank': 8,
-        'name': 'Putri Wulandari',
-        'username': '@putri',
-        'points': '85 Pts',
-        'status': 'stable',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Putri+Wulandari&background=ef4444&color=fff',
-      },
-      {
-        'rank': 9,
         'name': 'Rama Setiawan',
         'username': '@rama',
-        'points': '80 Pts',
-        'status': 'up',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Rama+Setiawan&background=3b82f6&color=fff',
+        'sport': 'Mini Soccer',
+        'region': 'Bandung',
+        'type': 'Komunitas',
+        'season': 'All Time',
+      },
+
+      // --- Januari - Maret 2024 ---
+      {
+        'name': 'Budi Racket',
+        'username': '@budiracket',
+        'sport': 'Badminton',
+        'region': 'Surabaya',
+        'type': 'Komunitas',
+        'season': 'Januari - Maret 2024',
       },
       {
-        'rank': 10,
-        'name': 'Dinda Cahyani',
-        'username': '@dinda',
-        'points': '78 Pts',
-        'status': 'down',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
+        'name': 'Gilang Kencana',
+        'username': '@gilangkencana',
+        'sport': 'Tenis Meja',
+        'region': 'Jakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
       },
       {
-        'rank': 11,
         'name': 'Dinda Cahyani',
         'username': '@dinda',
-        'points': '78 Pts',
-        'status': 'stable',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
+        'sport': 'Pickleball',
+        'region': 'Yogyakarta',
+        'type': 'Tunggal',
+        'season': 'Januari - Maret 2024',
+      },
+
+      // --- Oktober - Desember 2023 ---
+      {
+        'name': 'Sari Shuttlecock',
+        'username': '@sarishuttle',
+        'sport': 'Badminton',
+        'region': 'Bandung',
+        'type': 'Ganda',
+        'season': 'Oktober - Desember 2023',
       },
       {
-        'rank': 12,
-        'name': 'Dinda Cahyani',
-        'username': '@dinda',
-        'points': '78 Pts',
-        'status': 'up',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
+        'name': 'Kevin Halim',
+        'username': '@kevinhalim',
+        'sport': 'Tenis Meja',
+        'region': 'Bandung',
+        'type': 'Tunggal',
+        'season': 'Oktober - Desember 2023',
       },
       {
-        'rank': 13,
-        'name': 'Dinda Cahyani',
-        'username': '@dinda',
-        'points': '78 Pts',
-        'status': 'down',
-        'avatar':
-            'https://ui-avatars.com/api/?name=Dinda+Cahyani&background=14b8a6&color=fff',
+        'name': 'Squash Master',
+        'username': '@squashmaster',
+        'sport': 'Squash',
+        'region': 'Surabaya',
+        'type': 'Ganda',
+        'season': 'Oktober - Desember 2023',
+      },
+      {
+        'name': 'Padel King',
+        'username': '@padelking',
+        'sport': 'Padel',
+        'region': 'Jakarta',
+        'type': 'Komunitas',
+        'season': 'Oktober - Desember 2023',
+      },
+
+      // --- Juli - Agustus 2023 ---
+      {
+        'name': 'Maya Pingpong',
+        'username': '@mayaping',
+        'sport': 'Tenis Meja',
+        'region': 'Yogyakarta',
+        'type': 'Ganda',
+        'season': 'Juli - Agustus 2023',
+      },
+      {
+        'name': 'Fauzan Pratama',
+        'username': '@fauzan',
+        'sport': 'Tenis',
+        'region': 'Bali',
+        'type': 'Komunitas',
+        'season': 'Juli - Agustus 2023',
+      },
+      {
+        'name': 'Soccer Pro',
+        'username': '@soccerpro',
+        'sport': 'Mini Soccer',
+        'region': 'Surabaya',
+        'type': 'Komunitas',
+        'season': 'Juli - Agustus 2023',
+      },
+      {
+        'name': 'Pickle Master',
+        'username': '@picklemaster',
+        'sport': 'Pickleball',
+        'region': 'Medan',
+        'type': 'Ganda',
+        'season': 'Juli - Agustus 2023',
       },
     ];
+
+    // Filter based on current selections
+    List<Map<String, dynamic>> filteredPlayers = allPlayers.where((player) {
+      bool sportMatch =
+          selectedSports.isEmpty ||
+          selectedSports.contains(player['sport']) ||
+          selectedSports.contains("All Sports");
+
+      bool regionMatch =
+          selectedRegion.value.isEmpty ||
+          selectedRegion.value == "All Region" ||
+          selectedRegion.value == player['region'];
+
+      bool typeMatch = player['type'] == selectedGameType.value;
+
+      bool periodMatch =
+          selectedPeriod.value == "All Time" ||
+          player['season'] == selectedPeriod.value;
+
+      // ADD THIS DETAILED LOGGING:
+      if (sportMatch && regionMatch && typeMatch) {
+        print(
+          '✅ ${player['name']} - Sport: ${player['sport']}, Region: ${player['region']}, Type: ${player['type']}',
+        );
+      } else {
+        print(
+          '❌ ${player['name']} - Sport: ${player['sport']} (${sportMatch ? '✅' : '❌'}), Region: ${player['region']} (${regionMatch ? '✅' : '❌'}), Type: ${player['type']} (${typeMatch ? '✅' : '❌'})',
+        );
+      }
+
+      return sportMatch && regionMatch && typeMatch && periodMatch;
+    }).toList();
+
+    // If no matches, show some default data
+    if (filteredPlayers.isEmpty) {
+      filteredPlayers = allPlayers.take(5).toList();
+    }
+
+    print('Total filtered players: ${filteredPlayers.length}');
+    print('==================');
+
+    // Generate rankings with points based on filters and period
+    List<Map<String, dynamic>> rankings = [];
+
+    for (int i = 0; i < filteredPlayers.length; i++) {
+      var player = filteredPlayers[i];
+
+      // Vary points based on period
+      int basePoints = 200 - (i * 15);
+      int periodMultiplier = _getPeriodMultiplier();
+      int finalPoints = (basePoints * periodMultiplier / 100).round();
+
+      rankings.add({
+        'rank': i + 1,
+        'name': player['name'],
+        'username': player['username'],
+        'points': '$finalPoints Pts',
+        'status': _getRandomStatus(i),
+        'avatar':
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(player['name'])}&background=${_getRandomColor()}&color=fff',
+      });
+    }
+
+    return rankings;
+  }
+
+  int _getPeriodMultiplier() {
+    switch (selectedPeriod.value) {
+      case "All Time":
+        return 150; // Higher points for all time
+      case "Summer 2025":
+      case "Januari - Maret 2024":
+        return 100; // Current points
+      case "Oktober - Desember 2023":
+        return 80; // Lower points for older periods
+      case "Juli - Agustus 2023":
+        return 60;
+      default:
+        return 100;
+    }
+  }
+
+  String _getRandomStatus(int index) {
+    List<String> statuses = ['up', 'down', 'stable'];
+    return statuses[index % 3];
+  }
+
+  String _getRandomColor() {
+    List<String> colors = [
+      'f59e0b',
+      '6366f1',
+      'f97316',
+      '8b5cf6',
+      '06b6d4',
+      '84cc16',
+      'ec4899',
+      'ef4444',
+      '3b82f6',
+      '14b8a6',
+    ];
+    return colors[(DateTime.now().millisecondsSinceEpoch) % colors.length];
   }
 }

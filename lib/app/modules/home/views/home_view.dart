@@ -180,7 +180,7 @@ class HomeView extends GetView<HomeController> {
                       Expanded(
                         child: FilterButton(
                           title: "Region", // Not used anymore
-                          subtitle: controller.regionsDisplayText,
+                          subtitle: controller.regionDisplayText,
                           onTap: () => _showRegionFilter(context),
                         ),
                       ),
@@ -220,134 +220,166 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
 
-                        Obx(
-                          () => SliverToBoxAdapter(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
+                        Obx(() {
+                          final hasData =
+                              controller.rankings.isNotEmpty ||
+                              controller.topThree.isNotEmpty;
+
+                          if (hasData) {
+                            // ✅ Rankings exist
+                            return SliverToBoxAdapter(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  // Content below
-                                  Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 16,
-                                      ), // space for the handle bar
-                                      // Top 3 block (if podium is hidden)
-                                      if (!controller.isPodiumVisible.value &&
-                                          controller.topThree.isNotEmpty)
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 16,
+                                        ), // space for handle bar
+                                        // Top 3 block (if podium is hidden)
+                                        if (!controller.isPodiumVisible.value &&
+                                            controller.topThree.isNotEmpty)
+                                          Column(
+                                            children: List.generate(
+                                              controller.topThree.length,
+                                              (index) {
+                                                final topRanking =
+                                                    controller.topThree[index];
+                                                return RankingItem(
+                                                  rank: topRanking['rank'],
+                                                  name: topRanking['name'],
+                                                  username:
+                                                      topRanking['username'],
+                                                  points: topRanking['points'],
+                                                  avatar: topRanking['avatar'],
+                                                  status: topRanking['status'],
+                                                );
+                                              },
+                                            ),
+                                          ),
+
+                                        // Main rankings
                                         Column(
                                           children: List.generate(
-                                            controller.topThree.length,
+                                            controller.rankings.length,
                                             (index) {
-                                              final topRanking =
-                                                  controller.topThree[index];
+                                              final ranking =
+                                                  controller.rankings[index];
                                               return RankingItem(
-                                                rank: topRanking['rank'],
-                                                name: topRanking['name'],
-                                                username:
-                                                    topRanking['username'],
-                                                points: topRanking['points'],
-                                                avatar: topRanking['avatar'],
-                                                status: topRanking['status'],
+                                                rank: ranking['rank'],
+                                                name: ranking['name'],
+                                                username: ranking['username'],
+                                                points: ranking['points'],
+                                                avatar: ranking['avatar'],
+                                                status: ranking['status'],
+                                                isHighlighted: false,
                                               );
                                             },
                                           ),
                                         ),
+                                      ],
+                                    ),
 
-                                      // Main rankings
-                                      Column(
-                                        children: List.generate(
-                                          controller.rankings.length,
-                                          (index) {
-                                            final ranking =
-                                                controller.rankings[index];
-                                            return RankingItem(
-                                              rank: ranking['rank'],
-                                              name: ranking['name'],
-                                              username: ranking['username'],
-                                              points: ranking['points'],
-                                              avatar: ranking['avatar'],
-                                              status: ranking['status'],
-                                              isHighlighted: false,
-                                            );
-                                          },
+                                    // Tiny handle bar
+                                    Positioned(
+                                      top: 10,
+                                      left: 0,
+                                      right: 0,
+                                      child: Center(
+                                        child: Container(
+                                          width: 40,
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            color: HexColor("#CACCCF"),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
                                         ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            // ❌ No data
+                            return SliverToBoxAdapter(
+                              child: Container(
+                                width: double.infinity,
+                                height: 400, // adjust as needed
+                                color: Colors.white,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // 🖼️ Icon placeholder
+                                      const Icon(
+                                        Icons.description_outlined,
+                                        size: 80,
+                                        color: Colors.grey,
+                                      ),
+
+                                      const SizedBox(height: 24),
+
+                                      // 📝 Title
+                                      const Text(
+                                        "Leaderboard belum tersedia",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 8),
+
+                                      // 📝 Subtitle
+                                      const Text(
+                                        "Jadilah yang pertama untuk memulai\npertandingan dan raih posisi terbaikmu!",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 24),
+
+                                      // 🔘 Button
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          // 👉 TODO: add action here
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.deepPurple,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 24,
+                                            vertical: 12,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text("Mulai Tanding"),
                                       ),
                                     ],
                                   ),
-
-                                  // Tiny handle bar (overlayed at the top center)
-                                  Positioned(
-                                    top: 10,
-                                    left: 0,
-                                    right: 0,
-                                    child: Center(
-                                      child: Container(
-                                        width: 40,
-                                        height: 6,
-                                        decoration: BoxDecoration(
-                                          color: HexColor("#CACCCF"),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-
-                        // Empty state
-                        Obx(
-                          () =>
-                              controller.rankings.isEmpty &&
-                                  controller.topThree.isEmpty &&
-                                  !controller.isLoading.value
-                              ? SliverToBoxAdapter(
-                                  child: Container(
-                                    color: Colors.white,
-                                    height: 200,
-                                    child: const Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.search_off,
-                                            size: 64,
-                                            color: Colors.grey,
-                                          ),
-                                          SizedBox(height: 16),
-                                          Text(
-                                            "No rankings found",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Try adjusting your filters",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SliverToBoxAdapter(child: SizedBox()),
-                        ),
+                            );
+                          }
+                        }),
 
                         const SliverToBoxAdapter(child: SizedBox(height: 0)),
                       ],
@@ -412,14 +444,15 @@ class HomeView extends GetView<HomeController> {
       ),
       isScrollControlled: true,
       builder: (context) => RegionFilterBottomSheet(
-        currentSelections: controller.selectedRegions.toList(),
+        currentSelection:
+            controller.selectedRegion.value, // pass a single value
       ),
-    ).then((selectedRegions) {
-      if (selectedRegions != null) {
-        controller.updateRegions(selectedRegions);
+    ).then((selectedRegion) {
+      if (selectedRegion != null && selectedRegion is String) {
+        controller.updateRegion(selectedRegion); // update single region
         Get.snackbar(
           "Filter Applied",
-          "Regions updated: ${controller.regionsDisplayText}",
+          "Region updated: ${controller.selectedRegion}", // show single value
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 2),
           backgroundColor: Colors.deepPurple,

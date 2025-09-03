@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RegionFilterBottomSheet extends StatefulWidget {
-  final List<String> currentSelections;
+  final String? currentSelection;
 
-  const RegionFilterBottomSheet({super.key, required this.currentSelections});
+  const RegionFilterBottomSheet({super.key, this.currentSelection});
 
   @override
   State<RegionFilterBottomSheet> createState() =>
@@ -11,14 +11,14 @@ class RegionFilterBottomSheet extends StatefulWidget {
 }
 
 class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
-  late List<String> selectedRegions;
+  String? selectedRegion;
   String searchQuery = "";
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    selectedRegions = List.from(widget.currentSelections);
+    selectedRegion = widget.currentSelection;
   }
 
   @override
@@ -89,7 +89,7 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           ),
           const SizedBox(height: 20),
 
-          // Search bar with clear button
+          // Search bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
@@ -141,16 +141,12 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
               itemCount: filteredRegions.length,
               itemBuilder: (context, index) {
                 final region = filteredRegions[index];
-                final isSelected = selectedRegions.contains(region);
+                final isSelected = selectedRegion == region;
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (isSelected) {
-                        selectedRegions.remove(region);
-                      } else {
-                        selectedRegions.add(region);
-                      }
+                      selectedRegion = region;
                     });
                   },
                   child: Container(
@@ -173,12 +169,27 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
                             text: _buildHighlightedText(region, searchQuery),
                           ),
                         ),
-                        if (isSelected)
-                          const Icon(
-                            Icons.check,
-                            color: Color(0xFF7A5AF8),
-                            size: 20,
+                        Container(
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? const Color(0xFF7A5AF8)
+                                  : Colors.grey.shade400,
+                              width: 2,
+                            ),
+                            color: isSelected ? const Color(0xFF7A5AF8) : null,
                           ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  size: 14,
+                                  color: Colors.white,
+                                )
+                              : null,
+                        ),
                       ],
                     ),
                   ),
@@ -193,11 +204,11 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: selectedRegions.isNotEmpty
-                  ? () => Navigator.pop(context, selectedRegions)
+              onPressed: selectedRegion != null
+                  ? () => Navigator.pop(context, selectedRegion)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedRegions.isNotEmpty
+                backgroundColor: selectedRegion != null
                     ? const Color(0xFF7A5AF8)
                     : Colors.grey.shade300,
                 foregroundColor: Colors.white,
@@ -219,21 +230,21 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
   }
 
   TextSpan _buildHighlightedText(String text, String query) {
+    final isSelected = selectedRegion == text;
+
     if (query.isEmpty) {
       return TextSpan(
         text: text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
-          color: Colors.black87,
-          fontWeight: FontWeight.w400,
+          color: isSelected ? const Color(0xFF7A5AF8) : Colors.black87,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
         ),
       );
     }
 
-    final isSelected = selectedRegions.contains(text);
     final lowerText = text.toLowerCase();
     final lowerQuery = query.toLowerCase();
-
     List<TextSpan> spans = [];
     int start = 0;
 
@@ -269,11 +280,9 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
       spans.add(
         TextSpan(
           text: text.substring(index, index + query.length),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
-            color: isSelected
-                ? const Color(0xFF7A5AF8)
-                : const Color(0xFF7A5AF8),
+            color: Color(0xFF7A5AF8),
             fontWeight: FontWeight.bold,
           ),
         ),
