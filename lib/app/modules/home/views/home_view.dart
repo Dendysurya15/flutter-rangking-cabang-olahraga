@@ -11,6 +11,7 @@ import 'package:rangking_cabang_olahraga/app/widgets/points_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/rangking_item_widgets.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/region_filter_bottom_sheet.dart';
 import 'package:rangking_cabang_olahraga/app/widgets/sport_filter_bottom_sheet.dart';
+import 'package:rangking_cabang_olahraga/app/widgets/user_point_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -156,7 +157,7 @@ class HomeView extends GetView<HomeController> {
               // --- Filters ---
               // Replace your existing filter buttons section with this:
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Obx(
                   () => Row(
                     children: [
@@ -189,6 +190,10 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
 
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                child: UserPointCard(),
+              ),
               // --- Scrollable Content ---
               Expanded(
                 child: Obx(() {
@@ -201,201 +206,208 @@ class HomeView extends GetView<HomeController> {
                   return RefreshIndicator(
                     onRefresh: () => controller.refreshData(),
                     child: // Replace your entire CustomScrollView slivers section with this:
-                    CustomScrollView(
-                      controller: controller.scrollController,
-                      slivers: [
-                        // Podium - keep space but make invisible (KEEP THIS AS IS!)
-                        Obx(
-                          () => SliverToBoxAdapter(
-                            child: AnimatedOpacity(
-                              opacity: controller.isPodiumVisible.value
-                                  ? 1.0
-                                  : 0.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: const SizedBox(
-                                height: 350,
-                                child: PodiumWidget(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50),
+                      child: CustomScrollView(
+                        controller: controller.scrollController,
+                        slivers: [
+                          // Podium - keep space but make invisible (KEEP THIS AS IS!)
+                          Obx(
+                            () => SliverToBoxAdapter(
+                              child: AnimatedOpacity(
+                                opacity: controller.isPodiumVisible.value
+                                    ? 1.0
+                                    : 0.0,
+                                duration: const Duration(milliseconds: 300),
+                                child: const SizedBox(
+                                  height: 300,
+                                  child: PodiumWidget(),
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        Obx(() {
-                          final hasData =
-                              controller.rankings.isNotEmpty ||
-                              controller.topThree.isNotEmpty;
+                          Obx(() {
+                            final hasData =
+                                controller.rankings.isNotEmpty ||
+                                controller.topThree.isNotEmpty;
 
-                          if (hasData) {
-                            // ✅ Rankings exist (KEEP YOUR EXISTING LOGIC!)
-                            return SliverToBoxAdapter(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
+                            if (hasData) {
+                              // ✅ Rankings exist (KEEP YOUR EXISTING LOGIC!)
+                              return SliverToBoxAdapter(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
                                   ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 16,
-                                        ), // space for handle bar
-                                        // Top 3 block (if podium is hidden)
-                                        if (!controller.isPodiumVisible.value &&
-                                            controller.topThree.isNotEmpty)
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 16,
+                                          ), // space for handle bar
+                                          // Top 3 block (if podium is hidden)
+                                          if (!controller
+                                                  .isPodiumVisible
+                                                  .value &&
+                                              controller.topThree.isNotEmpty)
+                                            Column(
+                                              children: List.generate(
+                                                controller.topThree.length,
+                                                (index) {
+                                                  final topRanking = controller
+                                                      .topThree[index];
+                                                  return RankingItem(
+                                                    rank: topRanking['rank'],
+                                                    name: topRanking['name'],
+                                                    username:
+                                                        topRanking['username'],
+                                                    points:
+                                                        topRanking['points'],
+                                                    avatar:
+                                                        topRanking['avatar'],
+                                                    secondAvatar:
+                                                        topRanking['secondAvatar'] ??
+                                                        '', // ADD THIS
+                                                    status:
+                                                        topRanking['status'],
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                          // Main rankings
                                           Column(
                                             children: List.generate(
-                                              controller.topThree.length,
+                                              controller.rankings.length,
                                               (index) {
-                                                final topRanking =
-                                                    controller.topThree[index];
+                                                final ranking =
+                                                    controller.rankings[index];
                                                 return RankingItem(
-                                                  rank: topRanking['rank'],
-                                                  name: topRanking['name'],
-                                                  username:
-                                                      topRanking['username'],
-                                                  points: topRanking['points'],
-                                                  avatar: topRanking['avatar'],
+                                                  rank: ranking['rank'],
+                                                  name: ranking['name'],
+                                                  username: ranking['username'],
+                                                  points: ranking['points'],
+                                                  avatar: ranking['avatar'],
                                                   secondAvatar:
-                                                      topRanking['secondAvatar'] ??
+                                                      ranking['secondAvatar'] ??
                                                       '', // ADD THIS
-                                                  status: topRanking['status'],
+                                                  status: ranking['status'],
+                                                  isHighlighted: false,
                                                 );
                                               },
                                             ),
                                           ),
+                                        ],
+                                      ),
 
-                                        // Main rankings
-                                        Column(
-                                          children: List.generate(
-                                            controller.rankings.length,
-                                            (index) {
-                                              final ranking =
-                                                  controller.rankings[index];
-                                              return RankingItem(
-                                                rank: ranking['rank'],
-                                                name: ranking['name'],
-                                                username: ranking['username'],
-                                                points: ranking['points'],
-                                                avatar: ranking['avatar'],
-                                                secondAvatar:
-                                                    ranking['secondAvatar'] ??
-                                                    '', // ADD THIS
-                                                status: ranking['status'],
-                                                isHighlighted: false,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    // Tiny handle bar
-                                    Positioned(
-                                      top: 10,
-                                      left: 0,
-                                      right: 0,
-                                      child: Center(
-                                        child: Container(
-                                          width: 40,
-                                          height: 6,
-                                          decoration: BoxDecoration(
-                                            color: HexColor("#CACCCF"),
-                                            borderRadius: BorderRadius.circular(
-                                              4,
+                                      // Tiny handle bar
+                                      Positioned(
+                                        top: 10,
+                                        left: 0,
+                                        right: 0,
+                                        child: Center(
+                                          child: Container(
+                                            width: 40,
+                                            height: 6,
+                                            decoration: BoxDecoration(
+                                              color: HexColor("#CACCCF"),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            // ❌ No data
-                            return SliverFillRemaining(
-                              child: Container(
-                                color: Colors.white,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.description_outlined,
-                                        size: 80,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      const Text(
-                                        "Leaderboard belum tersedia",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        "Jadilah yang pertama untuk memulai\npertandingan dan raih posisi terbaikmu!",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 24),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // 👉 TODO: add action here
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.deepPurple,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 24,
-                                            vertical: 12,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Text("Mulai Tanding"),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            );
-                          }
-                        }),
+                              );
+                            } else {
+                              // ❌ No data
+                              return SliverFillRemaining(
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.description_outlined,
+                                          size: 80,
+                                          color: Colors.grey,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        const Text(
+                                          "Leaderboard belum tersedia",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Jadilah yang pertama untuk memulai\npertandingan dan raih posisi terbaikmu!",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 24),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // 👉 TODO: add action here
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.deepPurple,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text("Mulai Tanding"),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          }),
 
-                        // ADD THIS: Fill remaining space with white background when there's data
-                        Obx(() {
-                          final hasData =
-                              controller.rankings.isNotEmpty ||
-                              controller.topThree.isNotEmpty;
+                          // ADD THIS: Fill remaining space with white background when there's data
+                          Obx(() {
+                            final hasData =
+                                controller.rankings.isNotEmpty ||
+                                controller.topThree.isNotEmpty;
 
-                          if (hasData) {
-                            return SliverFillRemaining(
-                              hasScrollBody: false,
-                              child: Container(
-                                color: Colors
-                                    .white, // Just white background, nothing else
-                              ),
-                            );
-                          } else {
-                            return const SliverToBoxAdapter(
-                              child: SizedBox.shrink(),
-                            );
-                          }
-                        }),
-                      ],
+                            if (hasData) {
+                              return SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Container(
+                                  color: Colors
+                                      .white, // Just white background, nothing else
+                                ),
+                              );
+                            } else {
+                              return const SliverToBoxAdapter(
+                                child: SizedBox.shrink(),
+                              );
+                            }
+                          }),
+                        ],
+                      ),
                     ),
                   );
                 }),
